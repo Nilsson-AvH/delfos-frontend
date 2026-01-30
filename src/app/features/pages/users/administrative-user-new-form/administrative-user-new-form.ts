@@ -1,12 +1,12 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpAdministrativeUsers } from '../../../../core/services/http-administrative-users';
-import { map, Observable, tap } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
+import { Observable, tap } from 'rxjs';
+import matchValidator from '../../../../shared/validators/match.validator';
 
 @Component({
   selector: 'app-administrative-user-new-form',
-  imports: [ReactiveFormsModule, AsyncPipe],
+  imports: [ReactiveFormsModule],
   templateUrl: './administrative-user-new-form.html',
   styleUrl: './administrative-user-new-form.css',
   changeDetection: ChangeDetectionStrategy.OnPush, // Detecta cambios solo cuando hay cambios en el componente
@@ -32,8 +32,13 @@ export class AdministrativeUserNewForm {
       jobTitle: new FormControl('ADMINISTRATIVO', [Validators.required, Validators.pattern('^[a-zA-Z ]*$')]),
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required, Validators.minLength(8), Validators.maxLength(16)]),
+      confirmPassword: new FormControl('', [Validators.required]),
       status: new FormControl('inactive', [Validators.required])
-    })
+    },
+      {
+        validators: matchValidator('password', 'confirmPassword')
+      }
+    )
 
   }
 

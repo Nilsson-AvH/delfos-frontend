@@ -181,7 +181,19 @@
     <!--TODO: Add password confirmation-->
     <div class="field">
         <label for="confirmPassword">Confirm Password</label>
-        <input type="password" id="confirmPassword" name="confirmPassword">
+        <input type="password" id="confirmPassword" formControlName="confirmPassword">
+
+        <div class="error">
+            @if(this.formData.get('confirmPassword')?.hasError('mismatch') &&
+            this.formData.get('confirmPassword')?.touched) {
+            <small class="error">Las contraseñas no coinciden.</small>
+            }
+
+            @if(this.formData.get('confirmPassword')?.hasError('required') &&
+            this.formData.get('confirmPassword')?.touched) {
+            <small class="error">Debes confirmar la contraseña.</small>
+            }
+        </div>
     </div>
     <div class="field">
         <label for="status">Status</label>

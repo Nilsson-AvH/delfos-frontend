@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from "@angular/router";
+import { RouterLink } from "@angular/router";
 import { AshaLogoComponent } from '../asha-logo.component/asha-logo.component';
 // import { AshaLogoComponent } from ... (Descomenta cuando tengas el logo)
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, AshaLogoComponent], // Agrega AshaLogoComponent aquí también
+  imports: [RouterLink, AshaLogoComponent], // Agrega AshaLogoComponent aquí también
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
