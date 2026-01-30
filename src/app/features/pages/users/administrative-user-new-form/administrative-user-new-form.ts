@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpAdministrativeUsers } from '../../../../core/services/http-administrative-users';
-import { Observable, tap } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import matchValidator from '../../../../shared/validators/match.validator';
 
 @Component({
@@ -9,19 +9,22 @@ import matchValidator from '../../../../shared/validators/match.validator';
   imports: [ReactiveFormsModule],
   templateUrl: './administrative-user-new-form.html',
   styleUrl: './administrative-user-new-form.css',
-  changeDetection: ChangeDetectionStrategy.OnPush, // Detecta cambios solo cuando hay cambios en el componente
+  // changeDetection: ChangeDetectionStrategy.OnPush, // Detecta cambios solo cuando hay cambios en el componente
 })
 
 export class AdministrativeUserNewForm {
 
   // TODO: <> Crear un servicio para obtener las categorias
-  users!: Observable<any[]>;
+  // users!: Observable<any[]>;
   // TODO: </> Crear un servicio para obtener las categorias
 
   //Atributo para almacenar los datos del formulario
   public formData!: FormGroup;
 
-  constructor(private fulanito: HttpAdministrativeUsers) {
+  // Controlar cuando se suscribe y se desuscribe a un observable
+  registerSubscribed!: Subscription;
+
+  constructor(private httpAdministrativeUser: HttpAdministrativeUsers) {
     this.formData = new FormGroup({
       role: new FormControl('', [Validators.required]),
       // users: new FormControl('', [Validators.required]),
@@ -43,56 +46,55 @@ export class AdministrativeUserNewForm {
   }
 
   // Life cycle hooks
-  ngOnInit(): void {
-    console.log('ngOnInit');
-    this.users = this.fulanito.getAllUsers()
-      .pipe(
-        tap((data) => console.log('Datos obtenidos con tap', data)), //tap: Permite ver los datos que vienen del backend sin transformar
-        // map((data) => data.map((user: any) => ({
-        //   id: user.id,
-        //   fullName: "Camilo"
-        // }))), //map: Transforma los datos que vienen del backend
-        // tap((data) => console.log('Datos obtenidos con tap', data)), //tap: Permite ver los datos que vienen del backend sin transformar
-      );
-    console.log('Puto el que lo lea Observable: ', this.users);
-  }
+  // ngOnInit(): void {
+  //   console.log('ngOnInit');
+  //   this.users = this.httpAdministrativeUser.getAllUsers()
+  //     .pipe(
+  //       tap((data) => console.log('Datos obtenidos con tap', data)), //tap: Permite ver los datos que vienen del backend sin transformar
+  //       // map((data) => data.map((user: any) => ({
+  //       //   id: user.id,
+  //       //   fullName: "Camilo"
+  //       // }))), //map: Transforma los datos que vienen del backend
+  //       // tap((data) => console.log('Datos obtenidos con tap', data)), //tap: Permite ver los datos que vienen del backend sin transformar
+  //     );
+  //   console.log('Puto el que lo lea Observable: ', this.users);
+  // }
 
-  ngOnChanges(): void {
-    console.log('ngOnChanges');
-  }
+  // ngOnChanges(): void {
+  //   console.log('ngOnChanges');
+  // }
 
+  // Metodo con el cual vamos a capturar los datos del formulario al presionar el boton submit
   onSubmit() {
+    // Verificar si el formulario es valido
+    // IMPORTANTE: Si los campos no tienen validaciones, el formulario siempre sera valido  
+    if (this.formData.valid) {
+      //   console.log(this.formData.value);
+      console.log(this.formData.value);
+      // Llamanr al servicio para crear un usario usando un objeto observable
+      this.registerSubscribed = this.httpAdministrativeUser.createAdministrativeUser(this.formData.value).subscribe({
+        next: (data) => { // Se ejecuta cuando la peticion es exitosa
+          console.log('Administrative user created', data);
+          this.formData.reset(); // Limpia los campos del formulario cuando la peticion es exitosa
+        },
+        error: (error) => { // Se ejecuta cuando la peticion falla
+          console.error('Error creating administrative user', error);
+        },
+        complete: () => { // Se ejecuta cuando la peticion se completa
+          //Toca todos los campos y activa o despliega los mensajes de error
+          this.formData.markAsTouched();
+        }
+      })
+    }
+    else {
+      console.error('Formulario invalido');
+    }
 
-    // TODO: <> Comentar para enviar SOLO al frontend
-    // if (this.formData.valid) {
-    //   console.log(this.formData.value);
-    // }
-    // else {
-    //   console.error('Formulario invalido');
-    // }
-    // TODO: </> Comentar para enviar SOLO al frontend
-
-    // TODO: <> Descomentar para enviar al backend
-    console.log(this.formData.value);
-    // Llamanr al servicio para crear un usario usando un objeto observable
-    this.fulanito.createAdministrativeUser(this.formData.value).subscribe({
-      next: (data) => { // Se ejecuta cuando la peticion es exitosa
-        console.log('Administrative user created', data);
-        this.formData.reset(); // Limpia los campos del formulario cuando la peticion es exitosa
-      },
-      error: (error) => { // Se ejecuta cuando la peticion falla
-        console.error('Error creating administrative user', error);
-      },
-      complete: () => { // Se ejecuta cuando la peticion se completa
-        console.log('Limpie los campos del formulario.');
-      }
-    });
-    // TODO: </> Descomentar para enviar al backend
   }
 
-  ngDoCheck(): void {
-    console.log('ngDoCheck');
-  }
+  // ngDoCheck(): void {
+  //   console.log('ngDoCheck');
+  // }
 
   onReset() {
     this.formData.setValue({
@@ -108,24 +110,28 @@ export class AdministrativeUserNewForm {
     });
   }
 
-  ngAfterContentInit(): void {
-    console.log('ngAfterContentInit');
-  }
+  // ngAfterContentInit(): void {
+  //   console.log('ngAfterContentInit');
+  // }
 
-  ngAfterContentChecked(): void {
-    console.log('ngAfterContentChecked');
-  }
+  // ngAfterContentChecked(): void {
+  //   console.log('ngAfterContentChecked');
+  // }
 
-  ngAfterViewInit(): void {
-    console.log('ngAfterViewInit');
-  }
+  // ngAfterViewInit(): void {
+  //   console.log('ngAfterViewInit');
+  // }
 
-  ngAfterViewChecked(): void {
-    console.log('ngAfterViewChecked');
-  }
+  // ngAfterViewChecked(): void {
+  //   console.log('ngAfterViewChecked');
+  // }
 
-  ngOnDestroy(): void {
-    console.log('ngOnDestroy');
+  ngOnDestroy() {
+    // Validar que el observable no este suscrito
+    if (this.registerSubscribed) {
+      console.info('Componente destruido');
+      this.registerSubscribed.unsubscribe(); //Desuscribirse manualmente
+    }
   }
 
 
