@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpAdministrativeUsers } from '../../../../core/services/http-administrative-users';
 import { Observable, Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 import matchValidator from '../../../../shared/validators/match.validator';
 
 @Component({
@@ -24,7 +25,10 @@ export class AdministrativeUserNewForm {
   // Controlar cuando se suscribe y se desuscribe a un observable
   registerSubscribed!: Subscription;
 
-  constructor(private httpAdministrativeUser: HttpAdministrativeUsers) {
+  constructor(
+    private httpAdministrativeUser: HttpAdministrativeUsers,
+    private router: Router
+  ) {
     this.formData = new FormGroup({
       role: new FormControl('', [Validators.required]),
       // users: new FormControl('', [Validators.required]),
@@ -76,6 +80,8 @@ export class AdministrativeUserNewForm {
         next: (data) => { // Se ejecuta cuando la peticion es exitosa
           console.log('Administrative user created', data);
           this.formData.reset(); // Limpia los campos del formulario cuando la peticion es exitosa
+          // Redirigir a la lista de usuarios
+          this.router.navigate(['/dashboard/users']);
         },
         error: (error) => { // Se ejecuta cuando la peticion falla
           console.error('Error creating administrative user', error);
