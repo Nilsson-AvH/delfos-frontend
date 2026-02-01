@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 // El servicio del frontend para hacer peticiones al backend
 
@@ -8,10 +9,39 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class HttpAdministrativeUsers {
-  constructor(private http: HttpClient) { }
+  // constructor(private http: HttpClient) { }
 
-  createAdministrativeUser(administrativeUser: any) {
-    //Aca despues tenemos que agregar los token para enviarselos al http y haga la ligica segun el backend
-    return this.http.post('http://localhost:3000/api/v1/users', administrativeUser)
-  }
-}
+  // ✅ Forma moderna Angular 21
+  private http = inject(HttpClient);
+  private apiUrl = environment.apiUrl; // ✅ Usar variable de entorno
+
+  /**
+   * Crear nuevo usuario administrativo
+   * 🔓 El interceptor dev-bypass inyecta automáticamente el header X-Token-Dev
+   */
+  createAdministrativeUser(administrativeUser: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/v1/users`, administrativeUser);
+  } // ✅ CERRAR FUNCIÓN
+
+  /**
+   * Obtener todos los usuarios administrativos
+   */
+  getAdministrativeUsers(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/v1/users`);
+  } // ✅ CERRAR FUNCIÓN
+
+  /**
+   * Actualizar usuario administrativo
+   */
+  updateAdministrativeUser(userId: string, userData: any): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/v1/users/${userId}`, userData);
+  } // ✅ CERRAR FUNCIÓN
+
+  /**
+   * Eliminar usuario administrativo
+   */
+  deleteAdministrativeUser(userId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/v1/users/${userId}`);
+  } // ✅ CERRAR FUNCIÓN
+
+} // ✅ CERRAR CLASE
