@@ -11,37 +11,37 @@ import { environment } from '../../../environments/environment';
 export class HttpAdministrativeUsers {
   // constructor(private http: HttpClient) { }
 
-  // ✅ Forma moderna Angular 21
+  // Forma moderna Angular 21
   private http = inject(HttpClient);
-  private apiUrl = environment.apiUrl; // ✅ Usar variable de entorno
+  private apiUrl = environment.apiUrl; // Usar variable de entorno
 
   /**
    * Crear nuevo usuario administrativo
-   * 🔓 El interceptor dev-bypass inyecta automáticamente el header X-Token-Dev
+   * El interceptor dev-bypass inyecta automáticamente el header X-Token-Dev
    */
   createAdministrativeUser(administrativeUser: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/v1/users`, administrativeUser);
-  } // ✅ CERRAR FUNCIÓN
+  }
 
   /**
    * Obtener todos los usuarios administrativos
    */
   getAdministrativeUsers(): Observable<any> {
     return this.http.get(`${this.apiUrl}/v1/users`);
-  } // ✅ CERRAR FUNCIÓN
+  }
 
   /**
    * Actualizar usuario administrativo
    */
   updateAdministrativeUser(userId: string, userData: any): Observable<any> {
     return this.http.patch(`${this.apiUrl}/v1/users/${userId}`, userData);
-  } // ✅ CERRAR FUNCIÓN
+  }
 
   /**
    * Eliminar usuario administrativo
    */
   deleteAdministrativeUser(userId: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/v1/users/${userId}`);
-  } // ✅ CERRAR FUNCIÓN
+  }
 
-} // ✅ CERRAR CLASE
+}

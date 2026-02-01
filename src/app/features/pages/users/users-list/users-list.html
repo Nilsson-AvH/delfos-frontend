@@ -7,19 +7,21 @@
 <table>
     <tr>
         <th>Document</th>
-        <th>Second Last Name</th>
-        <th>Last Name</th>
+        <th>1st Last Name</th>
+        <th>2nd Last Name</th>
         <th>Names</th>
         <th>Job Title</th>
+        <th>Role</th>
         <th>Actions</th>
     </tr>
     @for(user of (users$ | async); track $index) {
     <tr>
         <td>{{ user.nuip }}</td>
-        <td>{{ user.secondLastName }}</td>
         <td>{{ user.lastName }}</td>
+        <td>{{ user.secondLastName }}</td>
         <td>{{ user.names }}</td>
         <td>{{ user.jobTitle }}</td>
+        <td>{{ user.role }}</td>
         <td>
             <button>Edit</button>
             <button>Delete</button>

@@ -36,7 +36,7 @@ export class AdministrativeUserNewForm {
       names: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z ]*$')]),
       lastName: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z ]*$')]),
       secondLastName: new FormControl('', [Validators.pattern('^[a-zA-Z ]*$')]),
-      jobTitle: new FormControl('ADMINISTRATIVO', [Validators.required, Validators.pattern('^[a-zA-Z ]*$')]),
+      jobTitle: new FormControl('Administrativo', [Validators.required, Validators.pattern('^[a-zA-Z ]*$')]),
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required, Validators.minLength(8), Validators.maxLength(16)]),
       confirmPassword: new FormControl('', [Validators.required]),
@@ -64,7 +64,7 @@ export class AdministrativeUserNewForm {
   //   console.log('Puto el que lo lea Observable: ', this.users);
   // }
 
-  // ngOnChanges(): void {
+  // ngOnChanges(): void {: 
   //   console.log('ngOnChanges');
   // }
 
@@ -109,7 +109,7 @@ export class AdministrativeUserNewForm {
       names: '',
       lastName: '',
       secondLastName: '',
-      jobTitle: 'ADMINISTRATIVO',
+      jobTitle: 'Administrativo',
       email: '',
       password: '',
       status: 'inactive'
