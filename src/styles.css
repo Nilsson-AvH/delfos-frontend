@@ -432,9 +432,29 @@ button.reset:hover {
     border-color: var(--text-muted);
 }
 
+/* ==================================================
+=== Category List Styles ===
+================================================== */
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td,
+th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
 /* =========================================
-   ESTILOS GLOBALES PARA MODALES (ÉXITO/ERROR)
-   ========================================= */
+=== ESTILOS GLOBALES PARA MODALES (ÉXITO/ERROR)
+========================================= */
 
 /* Fondo oscuro transparente */
 .modal-overlay {
