@@ -23,8 +23,8 @@
         <td>{{ user.jobTitle }}</td>
         <td>{{ user.role }}</td>
         <td>
-            <button>Edit</button>
-            <button>Delete</button>
+            <button type="button" (click)="onEdit(user.id)">Edit</button>
+            <button type="button" (click)="onDelete(user.id)">Delete</button>
         </td>
     </tr>
     }
