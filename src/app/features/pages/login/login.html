@@ -1,1 +1,49 @@
-<p>login works!</p>
+<form [formGroup]="formData" (ngSubmit)="onSubmit()">
+    <h1>Login</h1>
+
+    <div class="field full-width">
+        <label for="email">Email</label>
+        <input type="email" id="email" formControlName="email">
+
+        <div class="error">
+            @if(this.formData.get('email')?.invalid && (
+            this.formData.get('email')?.dirty ||
+            this.formData.get('email')?.touched)) {
+            <!-- Verificar las validaciones para el campo email -->
+            @if(this.formData.get('email')?.errors?.['required']) {
+            <small class="error">Email es requerido.</small>
+            }
+            @if(this.formData.get('email')?.errors?.['email']) {
+            <small class="error">Email debe ser un correo valido.</small>
+            }
+            }
+        </div>
+    </div>
+
+    <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" formControlName="password">
+
+        <div class="error">
+            @if(this.formData.get('password')?.invalid && (
+            this.formData.get('password')?.dirty ||
+            this.formData.get('password')?.touched)) {
+            <!-- Verificar las validaciones para el campo password -->
+            @if(this.formData.get('password')?.errors?.['required']) {
+            <small class="error">Password es requerido.</small>
+            }
+            @if(this.formData.get('password')?.errors?.['minlength']) {
+            <small class="error">Password debe tener al menos 8 caracteres.</small>
+            }
+            @if(this.formData.get('password')?.errors?.['maxlength']) {
+            <small class="error">Password debe tener maximo 12 caracteres.</small>
+            }
+            }
+        </div>
+    </div>
+
+    <div class="field buttons">
+        <button class="register" type="submit" [disabled]="this.formData.invalid">Login</button>
+        <button class="reset" type="reset" (click)="onReset()">Reset</button>
+    </div>
+</form>

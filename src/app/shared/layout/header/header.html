@@ -16,6 +16,17 @@
 
         <li class="dropdown-item" [class.active]="activeDropdown === 'users'">
             <a class="menu-trigger" (click)="toggleDropdown('users')">
+                Saas Auth <span class="arrow">▼</span>
+            </a>
+            <ul class="dropdown-content">
+                <li><a routerLink="/login" (click)="closeMenu()">Login</a></li>
+                <li class="divider"></li>
+                <li><a routerLink="/register" (click)="closeMenu()">Register</a></li>
+            </ul>
+        </li>
+
+        <li class="dropdown-item" [class.active]="activeDropdown === 'users'">
+            <a class="menu-trigger" (click)="toggleDropdown('users')">
                 Users <span class="arrow">▼</span>
             </a>
             <ul class="dropdown-content">
