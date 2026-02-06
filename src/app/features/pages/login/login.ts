@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpAuth } from '../../../core/services/http-auth';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +14,9 @@ export class Login {
   // Atributo para almacenar el formulario
   public formData!: FormGroup;
 
-  constructor(private httpAuth: HttpAuth) {
+  constructor(
+    private httpAuth: HttpAuth,
+    private router: Router) {
     this.formData = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required, Validators.minLength(8), Validators.maxLength(12)]),
@@ -28,7 +31,15 @@ export class Login {
       this.httpAuth.login(this.formData.value).subscribe({
         next: (response: any) => {
           console.log("Usuario logueado exitosamente", response);
-          this.formData.reset();
+
+          if (response.token && response.user) {
+            this.httpAuth.saveLocalStorage(response.token, response.user); // Guarda datos en el localStorage
+            this.router.navigate(['/dashboard']); // Redirecciona a la pagina de dashboard
+
+          }
+          this.formData.reset(); // Resetea el formulario
+
+
         },
         error: (error: any) => {
           console.log("Error al loguear el usuario", error);

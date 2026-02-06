@@ -7,6 +7,7 @@ import { UsersList } from './features/pages/users/users-list/users-list';
 import { AdministrativeUserNewForm } from './features/pages/users/administrative-user-new-form/administrative-user-new-form';
 import { ClientManagerUserNewForm } from './features/pages/users/client-manager-user-new-form/client-manager-user-new-form';
 import { UserEditForm } from './features/pages/users/user-edit-form/user-edit-form';
+import { Dashboard } from './features/pages/dashboard/dashboard';
 
 export const routes: Routes = [
     // Rutas de home
@@ -16,6 +17,7 @@ export const routes: Routes = [
     { path: 'register', component: Register },
     { path: '404', component: PageNotFound },
     // Rutas de dashboard usuarios
+    { path: 'dashboard', component: Dashboard },
     { path: 'dashboard/users', component: UsersList },
     { path: 'dashboard/administrative-user/new', component: AdministrativeUserNewForm },
     { path: 'dashboard/client-manager-user/new', component: ClientManagerUserNewForm },

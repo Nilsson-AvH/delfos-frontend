@@ -1,16 +1,26 @@
 import { Component } from '@angular/core';
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { AshaLogoComponent } from '../asha-logo.component/asha-logo.component';
+import { HttpAuth } from '../../../core/services/http-auth';
+import { AsyncPipe } from '@angular/common';
+import { HttpUsers } from '../../../core/services/http-users';
 // import { AshaLogoComponent } from ... (Descomenta cuando tengas el logo)
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink, AshaLogoComponent], // Agrega AshaLogoComponent aquí también
+  imports: [RouterLink, AshaLogoComponent, AsyncPipe], // Agrega AshaLogoComponent aquí también
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
 export class Header {
+
+  constructor(
+    public httpAuth: HttpAuth,
+    public httpUsers: HttpUsers,
+    private router: Router
+  ) { }
+
   // --- ESTADO DEL MENÚ PRINCIPAL (Hamburguesa) ---
   isMenuOpen = false;
 
@@ -39,5 +49,13 @@ export class Header {
   closeMenu() {
     this.isMenuOpen = false;      // Cierra la hamburguesa
     this.activeDropdown = null;   // Cierra los acordeones internos
+  }
+
+  onLogout() {
+    console.log("Cerrando sesion");
+    // Limpia el local storage
+    this.httpAuth.logout();
+    // Redirecciona a la pagina de login
+    this.router.navigate(['/login']);
   }
 }
