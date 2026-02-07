@@ -26,22 +26,22 @@ export class HttpAdministrativeUsers {
   /**
    * Obtener todos los usuarios administrativos
    */
-  getAdministrativeUsers(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/v1/users`);
-  }
+  // getAdministrativeUsers(): Observable<any> {
+  //   return this.http.get(`${this.apiUrl}/v1/users`);
+  // }
 
   /**
    * Actualizar usuario administrativo
    */
-  updateAdministrativeUser(userId: string, userData: any): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/v1/users/${userId}`, userData);
-  }
+  // updateAdministrativeUser(userId: string, userData: any): Observable<any> {
+  //   return this.http.patch(`${this.apiUrl}/v1/users/${userId}`, userData);
+  // }
 
   /**
    * Eliminar usuario administrativo
    */
-  deleteAdministrativeUser(userId: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/v1/users/${userId}`);
-  }
+  // deleteAdministrativeUser(userId: string): Observable<any> {
+  //   return this.http.delete(`${this.apiUrl}/v1/users/${userId}`);
+  // }
 
 }
