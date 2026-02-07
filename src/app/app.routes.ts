@@ -6,8 +6,8 @@ import { Home } from './features/pages/home/home';
 import { UsersList } from './features/pages/users/users-list/users-list';
 import { AdministrativeUserNewForm } from './features/pages/users/administrative-user-new-form/administrative-user-new-form';
 import { ClientManagerUserNewForm } from './features/pages/users/client-manager-user-new-form/client-manager-user-new-form';
-import { UserEditForm } from './features/pages/users/user-edit-form/user-edit-form';
 import { Dashboard } from './features/pages/dashboard/dashboard';
+import { AdministrativeUserEditForm } from './features/pages/users/administrative-user-edit-form/administrative-user-edit-form';
 
 export const routes: Routes = [
     // Rutas de home
@@ -21,7 +21,7 @@ export const routes: Routes = [
     { path: 'dashboard/users', component: UsersList },
     { path: 'dashboard/administrative-user/new', component: AdministrativeUserNewForm },
     { path: 'dashboard/client-manager-user/new', component: ClientManagerUserNewForm },
-    { path: 'dashboard/user/edit/:id', component: UserEditForm },
+    { path: 'dashboard/administrative-user/edit/:id', component: AdministrativeUserEditForm },
     // Las redirecciones deben ir al final
     { path: '', redirectTo: 'home', pathMatch: 'full' },
     { path: '**', redirectTo: '404', pathMatch: 'full' }

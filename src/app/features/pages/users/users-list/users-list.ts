@@ -2,10 +2,11 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { BehaviorSubject, Observable, switchMap } from 'rxjs';
 import { HttpUsers } from '../../../../core/services/http-users';
 import { AsyncPipe } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-users-list',
-  imports: [AsyncPipe],
+  imports: [AsyncPipe, RouterLink],
   templateUrl: './users-list.html',
   styleUrl: './users-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -18,7 +19,10 @@ export class UsersList {
   //Creamos un trigger para que se actualice la vista
   private refreshTrigger$ = new BehaviorSubject<void>(undefined);
 
-  constructor(private httpUsers: HttpUsers) { }
+  constructor(
+    private httpUsers: HttpUsers,
+    private router: Router
+  ) { }
 
   // Ciclo de vida de componentes deAngular
   ngOnInit(): void {
@@ -32,6 +36,7 @@ export class UsersList {
     this.httpUsers.getUserById(userId).subscribe({
       next: (data) => {
         console.log('User data', data);
+        this.router.navigate(['/dashboard/administrative-user/edit/', userId]);
       },
       error: (error) => {
         console.error('Error getting user data', error);

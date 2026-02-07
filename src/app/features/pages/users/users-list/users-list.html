@@ -23,6 +23,7 @@
         <td>{{ user.jobTitle }}</td>
         <td>{{ user.role }}</td>
         <td>
+            <a [routerLink]="['/dashboard/administrative-user/edit/', user.id ]">Edit</a>
             <button type="button" (click)="onEdit(user.id)">Edit</button>
             <button type="button" (click)="onDelete(user.id)">Delete</button>
         </td>
