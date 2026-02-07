@@ -1,1 +1,224 @@
-<p>administrative-user-edit-form works!</p>
+<form [formGroup]="formData" (ngSubmit)="onSubmit()">
+    <h1>Administrative User Edit</h1>
+    <div class="field">
+        <label for="role">Role</label>
+        <select formControlName="role" id="role">
+            <option value="">Select Role</option>
+            <option value="superadmin">System Super Admin</option>
+            <option value="admin">System Admin</option>
+            <option value="auditor">Auditor</option>
+        </select>
+
+        <div class="error">
+            @if(this.formData.get('role')?.invalid && (
+            this.formData.get('role')?.dirty ||
+            this.formData.get('role')?.touched)) {
+            <!-- Verificar las validaciones para el campo role -->
+            @if(this.formData.get('role')?.errors?.['required']) {
+            <small class="error">Role es requerido.</small>
+            }
+            }
+        </div>
+    </div>
+
+    <!-- <div class="field">
+        <label for="users">Users</label>
+        <select formControlName="users" id="users">
+            <option value="">Select User</option>
+            @for (user of users | async; track user.id) {
+            <option [value]="user.id">{{ user.fullName }}</option>
+            }
+        </select>
+
+        <div class="error">
+            @if(this.formData.get('users')?.invalid && (
+            this.formData.get('users')?.dirty ||
+            this.formData.get('users')?.touched)) {
+            Verificar las validaciones para el campo users
+            @if(this.formData.get('users')?.errors?.['required']) {
+            <small class="error">Users es requerido.</small>
+            }
+            }
+        </div>
+    </div> -->
+
+    <div class="field">
+        <label for="nuip">NUIP</label>
+        <input type="text" id="nuip" formControlName="nuip" />
+
+        <div class="error">
+            @if(this.formData.get('nuip')?.invalid && (
+            this.formData.get('nuip')?.dirty ||
+            this.formData.get('nuip')?.touched)) {
+            <!-- Verificar las validaciones para el campo nuip -->
+            @if(this.formData.get('nuip')?.errors?.['required']) {
+            <small class="error">NUIP es requerido.</small>
+            }
+            @if(this.formData.get('nuip')?.errors?.['pattern']) {
+            <small class="error">NUIP debe ser un numero.</small>
+            }
+            @if(this.formData.get('nuip')?.errors?.['minlength']) {
+            <small class="error">NUIP debe tener al menos 6 digitos.</small>
+            }
+            @if(this.formData.get('nuip')?.errors?.['maxlength']) {
+            <small class="error">NUIP debe tener maximo 10 digitos.</small>
+            }
+            }
+        </div>
+    </div>
+
+    <div class="field">
+        <label for="names">Names</label>
+        <input type="text" id="names" formControlName="names">
+
+        <div class="error">
+            @if(this.formData.get('names')?.invalid && (
+            this.formData.get('names')?.dirty ||
+            this.formData.get('names')?.touched)) {
+            <!-- Verificar las validaciones para el campo names -->
+            @if(this.formData.get('names')?.errors?.['required']) {
+            <small class="error">Nombres es requerido.</small>
+            }
+            @if(this.formData.get('names')?.errors?.['pattern']) {
+            <small class="error">Nombres debe ser solo texto.</small>
+            }
+            }
+        </div>
+    </div>
+    <div class="field">
+        <label for="lastName">Last Name</label>
+        <input type="text" id="lastName" formControlName="lastName">
+
+        <div class="error">
+            @if(this.formData.get('lastName')?.invalid && (
+            this.formData.get('lastName')?.dirty ||
+            this.formData.get('lastName')?.touched)) {
+            <!-- Verificar las validaciones para el campo lastName -->
+            @if(this.formData.get('lastName')?.errors?.['required']) {
+            <small class="error">Primer apellido es requerido.</small>
+            }
+            @if(this.formData.get('lastName')?.errors?.['pattern']) {
+            <small class="error">Primer apellido debe ser solo texto.</small>
+            }
+            }
+        </div>
+    </div>
+    <div class="field">
+        <label for="secondLastName">Second Last Name</label>
+        <input type="text" id="secondLastName" formControlName="secondLastName">
+
+        <div class="error">
+            @if(this.formData.get('secondLastName')?.invalid && (
+            this.formData.get('secondLastName')?.dirty ||
+            this.formData.get('secondLastName')?.touched)) {
+            <!-- Verificar las validaciones para el campo secondLastName -->
+            @if(this.formData.get('secondLastName')?.errors?.['required']) {
+            <small class="error">Segundo apellido es requerido.</small>
+            }
+            @if(this.formData.get('secondLastName')?.errors?.['pattern']) {
+            <small class="error">Segundo apellido debe ser solo texto.</small>
+            }
+            }
+        </div>
+    </div>
+    <div class="field">
+        <label for="jobTitle">Job Title</label>
+        <input type="text" id="jobTitle" formControlName="jobTitle">
+
+        <div class="error">
+            @if(this.formData.get('jobTitle')?.invalid && (
+            this.formData.get('jobTitle')?.dirty ||
+            this.formData.get('jobTitle')?.touched)) {
+            <!-- Verificar las validaciones para el campo jobTitle -->
+            @if(this.formData.get('jobTitle')?.errors?.['required']) {
+            <small class="error">Cargo es requerido.</small>
+            }
+            @if(this.formData.get('jobTitle')?.errors?.['pattern']) {
+            <small class="error">Cargo debe ser solo texto.</small>
+            }
+            }
+        </div>
+    </div>
+    <div class="field full-width">
+        <label for="email">Email</label>
+        <input type="email" id="email" formControlName="email">
+
+        <div class="error">
+            @if(this.formData.get('email')?.invalid && (
+            this.formData.get('email')?.dirty ||
+            this.formData.get('email')?.touched)) {
+            <!-- Verificar las validaciones para el campo email -->
+            @if(this.formData.get('email')?.errors?.['required']) {
+            <small class="error">Email es requerido.</small>
+            }
+            @if(this.formData.get('email')?.errors?.['email']) {
+            <small class="error">Email debe ser un correo valido.</small>
+            }
+            }
+        </div>
+    </div>
+    <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" formControlName="password">
+
+        <div class="error">
+            @if(this.formData.get('password')?.invalid && (
+            this.formData.get('password')?.dirty ||
+            this.formData.get('password')?.touched)) {
+            <!-- Verificar las validaciones para el campo password -->
+            @if(this.formData.get('password')?.errors?.['required']) {
+            <small class="error">Password es requerido.</small>
+            }
+            @if(this.formData.get('password')?.errors?.['minlength']) {
+            <small class="error">Password debe tener al menos 8 caracteres.</small>
+            }
+            @if(this.formData.get('password')?.errors?.['maxlength']) {
+            <small class="error">Password debe tener maximo 12 caracteres.</small>
+            }
+            }
+        </div>
+    </div>
+    <!--TODO: Add password confirmation-->
+    <div class="field">
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword" formControlName="confirmPassword">
+
+        <div class="error">
+            @if(this.formData.get('confirmPassword')?.hasError('mismatch') &&
+            this.formData.get('confirmPassword')?.touched) {
+            <small class="error">Las contraseñas no coinciden.</small>
+            }
+
+            @if(this.formData.get('confirmPassword')?.hasError('required') &&
+            this.formData.get('confirmPassword')?.touched) {
+            <small class="error">Debes confirmar la contraseña.</small>
+            }
+        </div>
+    </div>
+    <div class="field">
+        <label for="status">Status</label>
+        <div>
+            <input type="radio" id="active" formControlName="status" value="active">
+            <label for="active">Active</label>
+            <input type="radio" id="inactive" formControlName="status" value="inactive">
+            <label for="inactive">Inactive</label>
+            <input type="radio" id="suspended" formControlName="status" value="suspended">
+            <label for="suspended">Suspended</label>
+        </div>
+
+        <div class="error">
+            @if(this.formData.get('status')?.invalid && (
+            this.formData.get('status')?.dirty ||
+            this.formData.get('status')?.touched)) {
+            <!-- Verificar las validaciones para el campo status -->
+            @if(this.formData.get('status')?.errors?.['required']) {
+            <small class="error">Status es requerido.</small>
+            }
+            }
+        </div>
+    </div>
+    <div class="field buttons">
+        <button class="register" type="submit" [disabled]="this.formData.invalid">Update</button>
+        <button class="reset" type="reset" (click)="onReset()">Reset</button>
+    </div>
+</form>
