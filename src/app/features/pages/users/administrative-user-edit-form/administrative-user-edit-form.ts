@@ -56,17 +56,29 @@ export class AdministrativeUserEditForm {
   // ¿Por qué? Porque un metodo ngOnInit no deberia tener logica de negocio
   // ¿Qué deberia tener? Solo la logica de inicializacion del componente
   // Y porque un metodo/funcion solo deberia hacer una sola cosa
+
   ngOnInit() {
     // Paso 1: Obtener el ID del usuario de la URL
     this.userId = this.activatedRoute.snapshot.paramMap.get('id');
     console.log(this.userId);
 
-    // Paso 1.5: Validar si la ruta trae un ID
+    // Paso 1.5: Validar si la ruta trae un ID, para cargar los datos del usuario por ese ID
     if (this.userId) {
       // Paso 2: Obtener el usuario por ID
       this.httpUsers.getUserById(this.userId).subscribe({
         next: (user) => {
           console.log('Usuario encontrado:', user);
+          // Paso 3: Cargar los datos del usuario en el formulario
+          this.formData.patchValue({
+            role: user.role,
+            nuip: user.nuip,
+            names: user.names,
+            lastName: user.lastName,
+            secondLastName: user.secondLastName,
+            jobTitle: user.jobTitle,
+            email: user.email,
+            status: user.status
+          });
         },
         error: (error) => {
           console.error('Error al obtener el usuario:', error);
@@ -81,6 +93,31 @@ export class AdministrativeUserEditForm {
   // Metodo con el cual vamos a capturar los datos del formulario al presionar el boton submit
   onSubmit() {
     console.log(this.formData.value);
+
+    // Verificamos si el formulario es valido
+    if (this.formData.invalid) {
+      // Actualiza --> Service
+      this.httpUsers.updateUserById(
+        this.userId,
+        this.formData.value
+      ).subscribe({
+        next: (user) => {
+          console.log('Usuario actualizado:', user);
+          this.formData.reset();
+          this.router.navigate(['/users']);
+        },
+        error: (error) => {
+          console.error('Error al actualizar el usuario:', error);
+        },
+        complete: () => {
+          console.log('Petición onSubmit(updateAdministrativeUser) completada');
+          this.formData.markAsUntouched();
+        }
+      });
+    }
+    else {
+      console.log('Formulario invalido');
+    }
   }
 
   onReset() {

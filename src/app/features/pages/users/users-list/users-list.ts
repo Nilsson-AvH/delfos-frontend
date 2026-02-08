@@ -1,12 +1,12 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { BehaviorSubject, Observable, switchMap } from 'rxjs';
 import { HttpUsers } from '../../../../core/services/http-users';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, JsonPipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-users-list',
-  imports: [AsyncPipe, RouterLink],
+  imports: [AsyncPipe, RouterLink, JsonPipe],
   templateUrl: './users-list.html',
   styleUrl: './users-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -30,12 +30,13 @@ export class UsersList {
     this.users$ = this.refreshTrigger$.pipe(
       switchMap(() => this.httpUsers.getAllUsers())
     );
+    console.log('users$ de ngOnInit (users-list)', this.users$);
   }
 
   onEdit(userId: string): void {
     this.httpUsers.getUserById(userId).subscribe({
       next: (data) => {
-        console.log('User data', data);
+        console.log('User data de onEdit (users-list)', data);
         this.router.navigate(['/dashboard/administrative-user/edit/', userId]);
       },
       error: (error) => {

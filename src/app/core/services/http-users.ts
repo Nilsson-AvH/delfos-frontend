@@ -24,24 +24,37 @@ export class HttpUsers {
       //Este pipe nos permite manejar la data que llega del backend
       .pipe(
         //tap nos permite ejecutar un efecto secundario, en este caso, imprimir la data en consola
-        tap(data => console.log('Data', data)),
+        tap(data => console.log('Data de getAllUsers (http-users)', data)),
         //catchError nos permite manejar los errores que puedan ocurrir en la peticion
         catchError(error => of([]))
       );
   }
 
   /**
-   * Obtener un usuario por ID
+   * Eliminar un usuario por ID
    */
-  getUserById(userId: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}${this.usersSlug}/${userId}`);
+  deleteUserById(userId: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}${this.usersSlug}/${userId}`);
   }
 
   /**
-   * Eliminar un usuario
+   * Obtener un usuario por ID
    */
-  deleteUserById(userId: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}${this.usersSlug}/${userId}`);
+  getUserById(userId: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}${this.usersSlug}/${userId}`)
+      .pipe(
+        tap(data => console.log('Data de getUserById (http-users)', data)),
+        catchError(error => of([]))
+        // TODO: Te encontre, perro, de aca tengo que sacar los datos del usuario y cargarlos en el formulario
+        // https://github.com/BIT-202507/repaso-frontend/commit/b1d27f1408ca30400fd2813657449cae9bc8b1b8
+      );
+  }
+
+  /**
+   * Actualizar un usuario por ID
+   */
+  updateUserById(userId: string | null, updatedUserData: any): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}${this.usersSlug}/${userId}`, updatedUserData);
   }
 
 }
