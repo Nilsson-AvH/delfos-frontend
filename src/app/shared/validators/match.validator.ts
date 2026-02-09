@@ -1,19 +1,21 @@
+// ValidatorFn: es una funcion que recibe un AbstractControl y retorna ValidationErrors o null
+// AbstractControl: es la clase base para todos los controles del formulario
+// ValidationErrors: es un objeto que contiene los errores del control
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 /**
  * Validador genérico para comparar dos campos.
  * @param controlName El nombre del campo principal (ej: 'password')
  * @param matchingControlName El nombre del campo de confirmación (ej: 'confirmPassword')
+ * @param isOptional Si es true, solo valida cuando el campo principal tiene valor (útil para EDIT)
  */
 
-// ValidatorFn: es una funcion que recibe un AbstractControl y retorna ValidationErrors o null
-// AbstractControl: es la clase base para todos los controles del formulario
-// ValidationErrors: es un objeto que contiene los errores del control
-// null: significa que no hay errores
-// { mismatch: true }: significa que hay un error de coincidencia
-
 // matchValidator: es una funcion que recibe dos nombres de campos y retorna un ValidatorFn
-function matchValidator(controlName: string, matchingControlName: string): ValidatorFn {
+function matchValidator(
+    controlName: string,
+    matchingControlName: string,
+    isOptional: boolean = false
+): ValidatorFn {
     // abstractControl: es el control que queremos validar
     return (abstractControl: AbstractControl): ValidationErrors | null => {
         // control: es el control que queremos validar
@@ -24,6 +26,18 @@ function matchValidator(controlName: string, matchingControlName: string): Valid
         // Si alguno de los controles no existe, no hacemos nada
         if (!control || !matchingControl) {
             // Si alguno de los controles no existe, no hacemos nada
+            return null;
+        }
+
+        // Si es opcional y el campo principal está vacío, no validar
+        if (isOptional && (!control.value || control.value === '')) {
+            // Limpiar errores del campo de confirmación si existían
+            if (matchingControl.errors && matchingControl.errors['mismatch']) {
+                delete matchingControl.errors['mismatch'];
+                if (Object.keys(matchingControl.errors).length === 0) {
+                    matchingControl.setErrors(null);
+                }
+            }
             return null;
         }
 

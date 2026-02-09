@@ -166,9 +166,6 @@
             this.formData.get('password')?.dirty ||
             this.formData.get('password')?.touched)) {
             <!-- Verificar las validaciones para el campo password -->
-            @if(this.formData.get('password')?.errors?.['required']) {
-            <small class="error">Password es requerido.</small>
-            }
             @if(this.formData.get('password')?.errors?.['minlength']) {
             <small class="error">Password debe tener al menos 8 caracteres.</small>
             }
@@ -187,11 +184,6 @@
             @if(this.formData.get('confirmPassword')?.hasError('mismatch') &&
             this.formData.get('confirmPassword')?.touched) {
             <small class="error">Las contraseñas no coinciden.</small>
-            }
-
-            @if(this.formData.get('confirmPassword')?.hasError('required') &&
-            this.formData.get('confirmPassword')?.touched) {
-            <small class="error">Debes confirmar la contraseña.</small>
             }
         </div>
     </div>
@@ -218,7 +210,7 @@
         </div>
     </div>
     <div class="field buttons">
-        <button class="register" type="submit" [disabled]="this.formData.invalid">Update</button>
+        <button class="register" type="submit">Update</button>
         <button class="reset" type="reset" (click)="onReset()">Reset</button>
     </div>
 </form>

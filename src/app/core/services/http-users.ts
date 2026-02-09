@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, Observable, of, tap } from 'rxjs';
+import { catchError, map, Observable, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 // El servicio del frontend para hacer peticiones al backend
@@ -24,7 +24,7 @@ export class HttpUsers {
       //Este pipe nos permite manejar la data que llega del backend
       .pipe(
         //tap nos permite ejecutar un efecto secundario, en este caso, imprimir la data en consola
-        tap(data => console.log('Data de getAllUsers (http-users)', data)),
+        tap(data => console.log('Data de HttpUsers.getAllUsers() ->(http-users)', data)),
         //catchError nos permite manejar los errores que puedan ocurrir en la peticion
         catchError(error => of([]))
       );
@@ -38,15 +38,38 @@ export class HttpUsers {
   }
 
   /**
-   * Obtener un usuario por ID
+   * Obtener un usuario por ID y transformar la respuesta
+   * Respuesta original: { msg: "...", user: {...}, profile: {...} }
+   * Respuesta transformada: { ...user, ...profile }
    */
   getUserById(userId: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}${this.usersSlug}/${userId}`)
       .pipe(
-        tap(data => console.log('Data de getUserById (http-users)', data)),
-        catchError(error => of([]))
-        // TODO: Te encontre, perro, de aca tengo que sacar los datos del usuario y cargarlos en el formulario
-        // https://github.com/BIT-202507/repaso-frontend/commit/b1d27f1408ca30400fd2813657449cae9bc8b1b8
+        // ✅ 1. Depuración inicial (opcional)
+        tap(response => console.debug('🟢 Respuesta user cruda Backend getUserById() ->(http-users.ts):', response)),
+
+        // ✅ 2. Transformación de datos (Flattening)
+        map(response => {
+          // Extraemos user y profile de la respuesta
+          const user = response.user || {};
+          const profile = response.profile || {};
+
+          // Retornamos un solo objeto plano combinado
+          return {
+            ...user,       // names, lastName, email, role, etc.
+            ...profile,    // jobTitle, signatureUrl, etc.
+            // Si hay campos con el mismo nombre, profile sobrescribe a user
+          };
+        }),
+
+        // ✅ 3. Depuración final (opcional)
+        tap(transformedUser => console.debug('🟢 Usuario transformado getUserById() ->(http-users.ts):', transformedUser)),
+
+        // ✅ 4. Manejo de errores
+        catchError(error => {
+          console.error('Error fetching user:', error);
+          return of(null); // Retornar null para validar en el componente
+        })
       );
   }
 

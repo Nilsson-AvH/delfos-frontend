@@ -1,12 +1,12 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { BehaviorSubject, Observable, switchMap } from 'rxjs';
 import { HttpUsers } from '../../../../core/services/http-users';
-import { AsyncPipe, JsonPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-users-list',
-  imports: [AsyncPipe, RouterLink, JsonPipe],
+  imports: [AsyncPipe, RouterLink],
   templateUrl: './users-list.html',
   styleUrl: './users-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush

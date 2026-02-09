@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpUsers } from '../../../../core/services/http-users';
 import { HttpAdministrativeUsers } from '../../../../core/services/http-administrative-users';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import matchValidator from '../../../../shared/validators/match.validator';
 
@@ -41,16 +41,49 @@ export class AdministrativeUserEditForm {
       secondLastName: new FormControl('', [Validators.pattern('^[a-zA-Z ]*$')]),
       jobTitle: new FormControl('Administrativo', [Validators.required, Validators.pattern('^[a-zA-Z ]*$')]),
       email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required, Validators.minLength(8), Validators.maxLength(16)]),
-      confirmPassword: new FormControl('', [Validators.required]),
+      password: new FormControl('', [Validators.minLength(8), Validators.maxLength(16)]),
+      confirmPassword: new FormControl(''),
       status: new FormControl('inactive', [Validators.required])
-    },
-      {
-        validators: matchValidator('password', 'confirmPassword')
-      }
+    }, {
+      // Usar tu validador con el tercer parámetro en true
+      validators: matchValidator('password', 'confirmPassword', true)
+    }
     )
 
   }
+
+  /**
+ * Limpia campos vacíos, null o undefined del objeto
+ * @param obj Objeto con los datos del formulario
+ * @returns Objeto limpio sin campos vacíos
+ */
+  private cleanEmptyFields(obj: any): any {
+    const cleanedObj: any = {};
+
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        const value = obj[key];
+
+        // ✅ Excluir campos vacíos, null, undefined, o strings vacíos
+        const isEmpty =
+          value === '' ||
+          value === null ||
+          value === undefined ||
+          (typeof value === 'string' && value.trim() === '');
+
+        if (!isEmpty) {
+          cleanedObj[key] = value;
+        }
+      }
+    }
+
+    // ✅ Siempre eliminar confirmPassword (no debe ir al backend)
+    delete cleanedObj.confirmPassword;
+
+    return cleanedObj;
+  }
+
+
 
   // TODO: Refactorizar el metodo ngOnInit
   // ¿Por qué? Porque un metodo ngOnInit no deberia tener logica de negocio
@@ -58,33 +91,38 @@ export class AdministrativeUserEditForm {
   // Y porque un metodo/funcion solo deberia hacer una sola cosa
 
   ngOnInit() {
-    // Paso 1: Obtener el ID del usuario de la URL
     this.userId = this.activatedRoute.snapshot.paramMap.get('id');
-    console.log(this.userId);
+    console.debug('🟢 userId ngOnInit() ->(administrative-user-edit-form.ts):', this.userId);
 
-    // Paso 1.5: Validar si la ruta trae un ID, para cargar los datos del usuario por ese ID
     if (this.userId) {
-      // Paso 2: Obtener el usuario por ID
       this.httpUsers.getUserById(this.userId).subscribe({
         next: (user) => {
-          console.log('Usuario encontrado:', user);
-          // Paso 3: Cargar los datos del usuario en el formulario
+          // ✅ Validación por si viene null (del catchError)
+          if (!user) {
+            console.error('Usuario no encontrado');
+            this.router.navigate(['/dashboard/users']);
+            return;
+          }
+
+          console.debug('🟢 user limpio getUserById() ->(administrative-user-edit-form.ts):', user);
+
+          // ✅ Carga de datos simplificada (sin user.user o user.profile)
           this.formData.patchValue({
             role: user.role,
             nuip: user.nuip,
             names: user.names,
             lastName: user.lastName,
             secondLastName: user.secondLastName,
-            jobTitle: user.jobTitle,
+            jobTitle: user.jobTitle,  // Viene del profile, pero ya está en el objeto raíz
             email: user.email,
             status: user.status
           });
         },
         error: (error) => {
-          console.error('Error al obtener el usuario:', error);
+          console.error('Error inesperado:', error);
         },
         complete: () => {
-          console.log('Petición ngOnInit(getUserById) completada');
+          console.debug('🟢 Petición completada ngOnInit() ->(administrative-user-edit-form.ts):');
         }
       });
     }
@@ -92,31 +130,36 @@ export class AdministrativeUserEditForm {
 
   // Metodo con el cual vamos a capturar los datos del formulario al presionar el boton submit
   onSubmit() {
-    console.log(this.formData.value);
+    console.debug('🟢 formData.value onSubmit()->(administrative-user-edit-form):', this.formData.value);
 
     // Verificamos si el formulario es valido
-    if (this.formData.invalid) {
+    if (this.formData.valid) {
+
+      // Limpiar campos vacíos antes de enviar
+      const userData = this.cleanEmptyFields(this.formData.value);
+      console.debug('🟢 userData limpio (sin campos vacíos):', userData);
+
       // Actualiza --> Service
       this.httpUsers.updateUserById(
         this.userId,
-        this.formData.value
+        userData
       ).subscribe({
         next: (user) => {
-          console.log('Usuario actualizado:', user);
+          console.debug('🟢 Usuario actualizado:', user);
           this.formData.reset();
-          this.router.navigate(['/users']);
+          this.router.navigate(['/dashboard/users']);
         },
         error: (error) => {
           console.error('Error al actualizar el usuario:', error);
         },
         complete: () => {
-          console.log('Petición onSubmit(updateAdministrativeUser) completada');
+          console.debug('🟢 Petición onSubmit(updateAdministrativeUser) completada');
           this.formData.markAsUntouched();
         }
       });
     }
     else {
-      console.log('Formulario invalido');
+      console.error('Formulario invalido');
     }
   }
 
