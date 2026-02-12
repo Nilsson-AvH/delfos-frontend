@@ -9,11 +9,14 @@ export interface User {
     secondLastName: string;
     email: string;
     password: string;
-    confirmPassword: string;
+    // confirmPassword: string;
     roleRequest: string;
     jobTitle: string;
     role: string;
+    status: string;
     createdAt: string;
     updatedAt: string;
     __v: number;
+    user: {};
+    profile: {};
 }

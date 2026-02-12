@@ -1,0 +1,53 @@
+/* login.css */
+/* * {
+    border: 1px dotted red;
+} */
+
+/* Angular le da prioridad a esto sobre el global */
+.login-form {
+    /* Cambiamos el comportamiento de Grid a Flex */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+
+    /* Dimensiones de tarjeta de Login */
+    max-width: 400px;
+    margin: 4rem auto;
+}
+
+.login-form .field {
+    text-align: left;
+    border-bottom: none;
+    width: 100%;
+}
+
+/* Mensajes de Error */
+.error {
+    text-align: left;
+    height: 1.2rem;
+    margin-top: 0.25rem;
+}
+
+small.error {
+    color: var(--error-color);
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: block;
+}
+
+/* Ajuste de botones específico para este componente */
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+
+    margin-top: 1rem;
+}
+
+/* Opcional: Centrar título */
+h1 {
+    text-align: center;
+    border-bottom: none;
+}

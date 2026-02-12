@@ -23,9 +23,15 @@
         <td>{{ user.jobTitle }}</td>
         <td>{{ user.role }}</td>
         <td>
-            <a [routerLink]="['/dashboard/administrative-user/edit/', user.id ]">Edit</a>
-            <button type="button" (click)="onEdit(user.id)">Edit</button>
-            <button type="button" (click)="onDelete(user.id)">Delete</button>
+            <!-- ✅ APLICANDO LAS NUEVAS CLASES -->
+            <div class="action-buttons">
+                <button type="button" class="btn-action edit" (click)="onEdit(user.id)">
+                    Edit
+                </button>
+                <button type="button" class="btn-action delete" (click)="onDelete(user.id)">
+                    Delete
+                </button>
+            </div>
         </td>
     </tr>
     }

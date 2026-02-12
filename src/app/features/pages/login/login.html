@@ -1,4 +1,4 @@
-<form [formGroup]="formData" (ngSubmit)="onSubmit()">
+<form [formGroup]="formData" (ngSubmit)="onSubmit()" class="login-form">
     <h1>Login</h1>
 
     <div class="field full-width">
@@ -20,9 +20,9 @@
         </div>
     </div>
 
-    <div class="field">
+    <div class="field full-width">
         <label for="password">Password</label>
-        <input type="password" id="password" formControlName="password">
+        <input type="password" id="password" formControlName="password" autocomplete="new-password">
 
         <div class="error">
             @if(this.formData.get('password')?.invalid && (

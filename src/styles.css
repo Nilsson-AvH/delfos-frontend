@@ -364,7 +364,7 @@ input[type="radio"] {
 
 /* Mensajes de Error */
 .error {
-    min-height: 1.2rem;
+    height: 1.2rem;
     margin-top: 0.25rem;
 }
 
@@ -450,6 +450,66 @@ th {
 
 tr:nth-child(even) {
     background-color: #dddddd;
+}
+
+/* =========================================
+   BOTONES DE ACCIÓN (Tablas y Listas)
+   ========================================= */
+
+/* Contenedor para separar los botones */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    /* Separación entre botones */
+    justify-content: flex-start;
+    /* Alineados a la izquierda */
+}
+
+/* Estilo base para botones de acción (Edit, Delete, Ver, etc.) */
+.btn-action {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid var(--border-color);
+    background-color: white;
+    /* Fondo blanco como el botón Reset */
+    color: var(--text-muted);
+    /* Texto grisáceo inicial */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+/* --- Variantes de Hover --- */
+
+/* Botón EDITAR (Azul al hover) */
+.btn-action.edit:hover {
+    background-color: #eff6ff;
+    /* Azul muy pálido de fondo */
+    color: var(--primary-color);
+    /* Texto azul corporativo */
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.15);
+}
+
+/* Botón ELIMINAR (Rojo al hover) */
+.btn-action.delete:hover {
+    background-color: #fef2f2;
+    /* Rojo muy pálido de fondo */
+    color: var(--error-color);
+    /* Texto rojo */
+    border-color: var(--error-color);
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.15);
+}
+
+/* Botón Activo (Click) */
+.btn-action:active {
+    transform: translateY(1px);
+    /* Efecto de presión */
 }
 
 /* =========================================

@@ -5,6 +5,7 @@ import { HttpAdministrativeUsers } from '../../../../core/services/http-administ
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import matchValidator from '../../../../shared/validators/match.validator';
+import { User } from '../../../../core/interfaces/user';
 
 @Component({
   selector: 'app-administrative-user-edit-form',
@@ -22,6 +23,9 @@ export class AdministrativeUserEditForm {
 
   // Guarda el ID del usuario administrativo que viene de la URL
   userId!: string | null;
+
+  // Guarda el usuario administrativo que viene de la URL
+  userReloaded!: Partial<User>;
 
   constructor(
 
@@ -106,6 +110,9 @@ export class AdministrativeUserEditForm {
 
           console.debug('🟢 user limpio getUserById() ->(administrative-user-edit-form.ts):', user);
 
+          // ✅ CLONAR: Importante para romper la referencia con la respuesta HTTP
+          this.userReloaded = user;
+
           // ✅ Carga de datos simplificada (sin user.user o user.profile)
           this.formData.patchValue({
             role: user.role,
@@ -164,7 +171,20 @@ export class AdministrativeUserEditForm {
   }
 
   onReset() {
-    this.formData.reset();
+    if (this.userReloaded) {
+      console.debug('🔄 Restaurando valores originales:', this.userReloaded);
+
+      // ✅ Simple y directo: Esparcimos el backup + limpiamos passwords
+      this.formData.reset({
+        // Spread Operator (...): ...this.userReloaded toma todas las propiedades del backup (names, email, role, etc.) y las asigna automáticamente al formulario si los nombres coinciden. Ya no necesitas escribir role: this.userReloaded.role línea por línea.
+        ...this.userReloaded,
+        // Passwords Vacíos: Sobrescribimos password y confirmPassword explícitamente al final para asegurar que queden limpios.
+        password: '',
+        confirmPassword: ''
+      });
+    } else {
+      this.formData.reset();
+    }
   }
 
   // Cancelar la suscripción cuando el componente se destruye

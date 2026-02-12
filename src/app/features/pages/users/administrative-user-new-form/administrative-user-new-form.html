@@ -159,7 +159,7 @@
     </div>
     <div class="field">
         <label for="password">Password</label>
-        <input type="password" id="password" formControlName="password">
+        <input type="password" id="password" formControlName="password" autocomplete="new-password">
 
         <div class="error">
             @if(this.formData.get('password')?.invalid && (
@@ -181,7 +181,7 @@
     <!--TODO: Add password confirmation-->
     <div class="field">
         <label for="confirmPassword">Confirm Password</label>
-        <input type="password" id="confirmPassword" formControlName="confirmPassword">
+        <input type="password" id="confirmPassword" formControlName="confirmPassword" autocomplete="new-password">
 
         <div class="error">
             @if(this.formData.get('confirmPassword')?.hasError('mismatch') &&

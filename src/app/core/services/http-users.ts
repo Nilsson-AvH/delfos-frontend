@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { User } from '../interfaces/user';
 
 // El servicio del frontend para hacer peticiones al backend
 
@@ -19,8 +20,8 @@ export class HttpUsers {
   /**
    * Obtener todos los usuarios
    */
-  getAllUsers(): Observable<any> {
-    return this.http.get(`${this.apiUrl}${this.usersSlug}`)
+  getAllUsers(): Observable<Partial<User>[]> {
+    return this.http.get<Partial<User>[]>(`${this.apiUrl}${this.usersSlug}`)
       //Este pipe nos permite manejar la data que llega del backend
       .pipe(
         //tap nos permite ejecutar un efecto secundario, en este caso, imprimir la data en consola
@@ -33,8 +34,8 @@ export class HttpUsers {
   /**
    * Eliminar un usuario por ID
    */
-  deleteUserById(userId: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}${this.usersSlug}/${userId}`);
+  deleteUserById(userId: string): Observable<Partial<User>> {
+    return this.http.delete<Partial<User>>(`${this.apiUrl}${this.usersSlug}/${userId}`);
   }
 
   /**
@@ -42,8 +43,8 @@ export class HttpUsers {
    * Respuesta original: { msg: "...", user: {...}, profile: {...} }
    * Respuesta transformada: { ...user, ...profile }
    */
-  getUserById(userId: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}${this.usersSlug}/${userId}`)
+  getUserById(userId: string): Observable<Partial<User> | null> {
+    return this.http.get<Partial<User> | null>(`${this.apiUrl}${this.usersSlug}/${userId}`)
       .pipe(
         // ✅ 1. Depuración inicial (opcional)
         tap(response => console.debug('🟢 Respuesta user cruda Backend getUserById() ->(http-users.ts):', response)),
@@ -51,8 +52,8 @@ export class HttpUsers {
         // ✅ 2. Transformación de datos (Flattening)
         map(response => {
           // Extraemos user y profile de la respuesta
-          const user = response.user || {};
-          const profile = response.profile || {};
+          const user = response?.user || {};
+          const profile = response?.profile || {};
 
           // Retornamos un solo objeto plano combinado
           return {
@@ -70,14 +71,14 @@ export class HttpUsers {
           console.error('Error fetching user:', error);
           return of(null); // Retornar null para validar en el componente
         })
-      );
+      ); 66
   }
 
   /**
    * Actualizar un usuario por ID
    */
-  updateUserById(userId: string | null, updatedUserData: any): Observable<any> {
-    return this.http.patch<any>(`${this.apiUrl}${this.usersSlug}/${userId}`, updatedUserData);
+  updateUserById(userId: string | null, updatedUserData: any): Observable<Partial<User>> {
+    return this.http.patch<Partial<User>>(`${this.apiUrl}${this.usersSlug}/${userId}`, updatedUserData);
   }
 
 }
