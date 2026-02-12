@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { User } from '../interfaces/user';
 import { BehaviorSubject, catchError, Observable, of, tap } from 'rxjs';
@@ -64,6 +64,7 @@ export class HttpAuth {
       this.currentUser.next(null);
       this.currentToken.next(null);
     }
+    return { userData, token };
   }
 
   clearLocalStorageData() {
@@ -76,5 +77,31 @@ export class HttpAuth {
   logout() {
     this.clearLocalStorageData();
   }
+
+  checkAuthStatus() {
+
+    // Paso 1 : Obtener el token del local storage si este existe y responder al cliente.
+
+    // Desdestructurar el objeto retornado por el metodo getLocalStorageData()
+    const { token } = this.getLocalStorageData();
+
+    // Si el token no existe, redirigir al login.
+    if (!token) {
+      this.clearLocalStorageData(); // Limpiar el local storage
+      return false; // No permitir el acceso a la ruta protegida
+    }
+
+    // Paso 2 : Crear el encabezado con el nombre X-Token y el valor del token que sera enviado al backend.
+    const headers = new HttpHeaders().set('X-Token', token);
+
+    // Paso 3 : Realizar una solicitud GET al endpoint /v1/auth/renew-token para verificar la validez del token.
+    return this.http.get(`${this.apiUrl}/v1/auth/renew-token`, { headers }) // este endpoint debe retornar un nuevo token y el usuario.
+
+
+
+    return true;
+  }
+
+
 
 }

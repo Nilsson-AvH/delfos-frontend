@@ -14,8 +14,31 @@ export class HttpUsers {
 
   // ✅ Forma moderna Angular 21
   private http = inject(HttpClient);
+  // apiUrl : string = 'http://localhost:3000/api';
   private apiUrl = environment.apiUrl; // ✅ Usar variable de entorno
+  // usersSlug : string = '/v1/users';
   private usersSlug = environment.usersSlug;
+
+  /**
+   * Crea cualquier tipo de usuario.
+   * El backend debe ser lo suficientemente inteligente para recibir 
+   * el payload completo y distribuirlo a las colecciones correctas 
+   * basándose en el campo 'role'.
+   */
+  createUser(userData: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}${this.usersSlug}`, userData)
+      .pipe(
+        tap(response => console.log('🟢 User created successfully:', response)),
+        catchError(error => {
+          console.error('Error creating user:', error);
+          return of(null);
+        })
+      );
+  }
+
+  //   createAdministrativeUser(administrativeUser: any): Observable<any> {
+  //   return this.http.post(`${this.apiUrl}/v1/users`, administrativeUser);
+  // }
 
   /**
    * Obtener todos los usuarios

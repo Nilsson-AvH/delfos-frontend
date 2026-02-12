@@ -1,0 +1,248 @@
+<form [formGroup]="formData" (ngSubmit)="onSubmit()">
+    <h1>Create New User</h1>
+
+    <fieldset>
+        <legend>System Access</legend>
+
+        <div class="field">
+            <label for="role">Role</label>
+            <select formControlName="role" id="role">
+                <option value="">Select Role</option>
+                <optgroup label="Administrative">
+                    <option value="superadmin">System Super Admin</option>
+                    <option value="admin">System Admin</option>
+                    <option value="auditor">Auditor</option>
+                </optgroup>
+                <optgroup label="Operations">
+                    <option value="operational">Operative Staff</option>
+                    <option value="clientManager">Client Manager</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" formControlName="email">
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label for="password">Password</label>
+                <input type="password" id="password" formControlName="password" autocomplete="new-password">
+            </div>
+            <div class="field">
+                <label for="confirmPassword">Confirm</label>
+                <input type="password" id="confirmPassword" formControlName="confirmPassword"
+                    autocomplete="new-password">
+            </div>
+        </div>
+
+        <div class="field">
+            <label>Status</label>
+            <div class="radio-group">
+                <label><input type="radio" formControlName="status" value="active"> Active</label>
+                <label><input type="radio" formControlName="status" value="inactive"> Inactive</label>
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Personal Information</legend>
+        <div class="field">
+            <label for="nuip">NUIP (Document ID)</label>
+            <input type="text" id="nuip" formControlName="nuip">
+        </div>
+        <div class="field">
+            <label for="names">Names</label>
+            <input type="text" id="names" formControlName="names">
+        </div>
+
+        <div class="field">
+            <label for="lastName">First Last Name</label>
+            <input type="text" id="lastName" formControlName="lastName">
+        </div>
+
+        <div class="field">
+            <label for="secondLastName">Second Last Name</label>
+            <input type="text" id="secondLastName" formControlName="secondLastName">
+        </div>
+
+        <div class="field">
+            <label for="photo">Photo</label>
+            <input type="file" id="photo" formControlName="photo">
+        </div>
+
+    </fieldset>
+
+    @if (isAdministrative) {
+    <fieldset class="fade-in">
+        <legend>Administrative Details</legend>
+        <div class="field">
+            <label for="jobTitle">Job Title</label>
+            <input type="text" id="jobTitle" formControlName="jobTitle">
+        </div>
+    </fieldset>
+    }
+
+    @if (isOperational || isClientManager) {
+    <fieldset class="fade-in">
+        <legend>Extended Personal Data</legend>
+
+        <div class="field-row">
+            <div class="field">
+                <label>Birth Date</label>
+                <input type="date" formControlName="birthDate">
+            </div>
+            <div class="field">
+                <label>Birth Place</label>
+                <input type="text" formControlName="birthPlace">
+            </div>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label>Issue Date (ID)</label>
+                <input type="date" formControlName="issueDate">
+            </div>
+            <div class="field">
+                <label>Issue Place (ID)</label>
+                <input type="text" formControlName="issuePlace">
+            </div>
+        </div>
+
+        <div class="field">
+            <label>Nationality</label>
+            <input type="text" formControlName="nationality">
+        </div>
+
+        <div class="field">
+            <label>Phone Number</label>
+            <input type="tel" formControlName="phones">
+        </div>
+
+        <div class="field">
+            <label>Address</label>
+            <input type="text" formControlName="address">
+        </div>
+    </fieldset>
+    }
+
+    @if (isOperational) {
+    <fieldset class="fade-in">
+        <legend>Operational Details</legend>
+
+        <div class="field-row">
+            <div class="field">
+                <label>Gender</label>
+                <select formControlName="gender">
+                    <option value="Hombre">Male</option>
+                    <option value="Mujer">Female</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>Marital Status</label>
+                <select formControlName="maritalStatus">
+                    <option value="Soltero">Single</option>
+                    <option value="Casado">Married</option>
+                    <option value="Union Libre">Free Union</option>
+                    <option value="Divorciado">Divorced</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="field">
+            <div class="field">
+                <label>Height (cm)</label>
+                <input type="number" formControlName="height">
+            </div>
+            <div class="field">
+                <label>Weight (kg)</label>
+                <input type="number" formControlName="weight">
+            </div>
+        </div>
+
+        <div class="field">
+            <label>Housing Type</label>
+            <select formControlName="housingType">
+                <option value="Propio">Owned</option>
+                <option value="Familiar">Family</option>
+                <option value="Alquilado">Rented</option>
+                <option value="Otro">Other</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Neighborhood</label>
+            <input type="text" formControlName="neighborhood">
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Job Assignment</legend>
+        Campos de asignación de puesto al trabajador.
+    </fieldset>
+
+
+    <fieldset>
+        <legend>Mobility Data</legend>
+        <!-- Vehicle Data -->
+
+        <div class="field-checkbox">
+            <label>
+                <input type="checkbox" formControlName="hasVehicle"> Has Vehicle?
+            </label>
+            <label>
+                <input type="checkbox" formControlName="driversLicense"> Drivers License?
+            </label>
+        </div>
+
+        <div class="field">
+            <label>Vehicle Type</label>
+            <select formControlName="vehicleType">
+                <option value="Automovil">Car</option>
+                <option value="Moto">Motorcycle</option>
+                <option value="Bicicleta">Bicycle</option>
+                <option value="Ninguno">None</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label>License Category</label>
+            <select formControlName="licenseCategory">
+                <option value="A1">A1</option>
+                <option value="A2">A2</option>
+                <option value="B1">B1</option>
+                <option value="B2">B2</option>
+                <option value="C1">C1</option>
+                <option value="C2">C2</option>
+                <option value="N/A">N/A</option>
+            </select>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Emergency Contact</legend>
+
+        <div class="field">
+            <label>Emergency Contact</label>
+            <input type="text" formControlName="emergencyContact">
+        </div>
+
+        <div class="field">
+            <label>Emergency Contact Phone</label>
+            <input type="tel" formControlName="emergencyContactPhone">
+        </div>
+
+        <div class="field">
+            <label>Emergency Contact Relationship</label>
+            <input type="text" formControlName="emergencyContactRelationship">
+        </div>
+    </fieldset>
+
+    }
+
+    <div class="field buttons">
+        <button class="register" type="submit" [disabled]="formData.invalid">Register User</button>
+        <button class="reset" type="button" (click)="onReset()">Reset</button>
+    </div>
+</form>

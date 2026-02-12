@@ -1,0 +1,197 @@
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
+import { HttpUsers } from '../../../../core/services/http-users'; // Usaremos HttpUsers general
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import matchValidator from '../../../../shared/validators/match.validator';
+import { CommonModule } from '@angular/common'; // Para directivas básicas
+
+@Component({
+  selector: 'app-user-new-form',
+  standalone: true, // Asumo que usas standalone components por los imports anteriores
+  imports: [ReactiveFormsModule, CommonModule],
+  templateUrl: './user-new-form.html',
+  styleUrl: './user-new-form.css',
+})
+export class UserNewForm implements OnInit, OnDestroy {
+
+  public formData!: FormGroup;
+  private roleSubscription!: Subscription;
+  private submitSubscription!: Subscription;
+
+  // Flags para controlar la vista
+  public isOperational = false;
+  public isClientManager = false;
+  public isAdministrative = false;
+
+  constructor(
+    private fb: FormBuilder,
+    private httpUsers: HttpUsers, // Usar el servicio genérico
+    private router: Router
+  ) {
+    this.initForm();
+  }
+
+  ngOnInit(): void {
+    // Escuchar cambios en el Rol para mutar el formulario
+    this.roleSubscription = this.formData.get('role')!.valueChanges.subscribe(role => {
+      this.onRoleChange(role);
+    });
+  }
+
+  private initForm() {
+    // 1. Campos Base (Siempre existen)
+    this.formData = this.fb.group({
+      role: ['', [Validators.required]],
+      nuip: ['', [Validators.required, Validators.pattern('^[0-9]*$'), Validators.minLength(6), Validators.maxLength(10)]],
+      names: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]*$')]],
+      lastName: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]*$')]],
+      secondLastName: ['', [Validators.pattern('^[a-zA-Z ]*$')]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(16)]],
+      confirmPassword: ['', [Validators.required]],
+      status: ['inactive', [Validators.required]]
+    }, {
+      validators: matchValidator('password', 'confirmPassword')
+    });
+  }
+
+  /**
+   * Lógica Central: Muta el formulario según el rol seleccionado
+   */
+  private onRoleChange(role: string) {
+    this.isOperational = role === 'operational';
+    this.isClientManager = role === 'clientManager';
+    this.isAdministrative = ['superadmin', 'admin', 'auditor'].includes(role);
+
+    // 1. Limpiar controles específicos previos para evitar basura
+    this.removeSpecificControls();
+
+    // 2. Agregar controles según el rol
+    if (this.isAdministrative) {
+      this.formData.addControl('jobTitle', new FormControl('Administrativo', Validators.required));
+    }
+    else if (this.isOperational) {
+      this.addOperationalControls();
+    }
+    else if (this.isClientManager) {
+      this.addClientManagerControls();
+    }
+  }
+
+  private removeSpecificControls() {
+    const controlsToRemove = [
+      'jobTitle',
+      'birthDate', 'birthPlace', 'issueDate', 'issuePlace', 'nationality', // Comunes Operativo/Manager
+      'gender', 'maritalStatus', 'address', 'neighborhood', 'phones',
+      'height', 'weight', 'housingType', 'hasVehicle', 'driversLicense', 'vehicleType', 'licenseCategory', // Específicos Operativo
+      'emergencyContact', 'emergencyContactPhone', 'emergencyContactRelationship', // Específicos Operativo
+      // 'currentClient', 'currentContract', 'currentSocialSecurity', // Específicos Operativo
+    ];
+    controlsToRemove.forEach(controlName => {
+      if (this.formData.contains(controlName)) {
+        this.formData.removeControl(controlName);
+      }
+    });
+  }
+
+  private addClientManagerControls() {
+    // Campos requeridos por UserClientManager.model.js
+    this.formData.addControl('birthDate', new FormControl('', Validators.required));
+    this.formData.addControl('birthPlace', new FormControl('', Validators.required));
+    this.formData.addControl('issueDate', new FormControl('', Validators.required));
+    this.formData.addControl('issuePlace', new FormControl('', Validators.required));
+    this.formData.addControl('nationality', new FormControl('Colombiano', Validators.required));
+    this.formData.addControl('phones', new FormControl('', Validators.required)); // Podría ser un FormArray luego
+    this.formData.addControl('address', new FormControl(''));
+  }
+
+  private addOperationalControls() {
+    // Reutilizamos los de ClientManager que son comunes
+    this.addClientManagerControls();
+
+    // Agregamos los exclusivos de Operativo (UserOperational.model.js)
+
+    // Operational Details
+    this.formData.addControl('gender', new FormControl('', Validators.required));
+    this.formData.addControl('maritalStatus', new FormControl('', Validators.required));
+    this.formData.addControl('height', new FormControl('', [Validators.required, Validators.min(0)]));
+    this.formData.addControl('weight', new FormControl('', [Validators.required, Validators.min(0)]));
+    this.formData.addControl('housingType', new FormControl('', Validators.required));
+    this.formData.addControl('neighborhood', new FormControl('', Validators.required));
+
+    //Job Assignment
+
+    // NOTA: Operational requiere Contract y SocialSecurity. 
+    // Lo ideal seria tener pasos (Wizard) o pestañas, pero por ahora irán aquí si son obligatorios.
+    // O se pueden crear en null y llenar luego en la edición.
+
+    // Mobility Details
+    this.formData.addControl('hasVehicle', new FormControl(false));
+    this.formData.addControl('driversLicense', new FormControl(false));
+    this.formData.addControl('vehicleType', new FormControl(''));
+    this.formData.addControl('licenseCategory', new FormControl(''));
+    // Emergency Contact
+    this.formData.addControl('emergencyContact', new FormControl(''));
+    this.formData.addControl('emergencyContactPhone', new FormControl(''));
+    this.formData.addControl('emergencyContactRelationship', new FormControl(''));
+
+  }
+
+  onSubmit() {
+    if (this.formData.invalid) {
+      this.formData.markAllAsTouched();
+      return;
+    }
+
+    const payload = this.preparePayload(this.formData.value);
+    console.log('Enviando Payload:', payload);
+
+    // IMPORTANTE: Asegúrate de que tu HttpUsers tenga un método 'createUser' genérico
+    // que apunte a /v1/users. El backend debe ser capaz de rutear internamente o
+    // tu servicio debe decidir el endpoint según el rol.
+
+    // Asumiendo que usas el mismo endpoint /v1/users y el backend discrimina por 'role'
+    // O si tienes endpoints separados:
+    let request$: any;
+
+    // Aquí decides la estrategia de envío.
+    // Opción A: Un solo endpoint inteligente en backend.
+    request$ = this.httpUsers.createUser(payload);
+
+    this.submitSubscription = request$.subscribe({
+      next: (data: any) => {
+        console.log('User created', data);
+        this.router.navigate(['/dashboard/users']);
+      },
+      error: (error: any) => console.error('Error creating user', error)
+    });
+  }
+
+  /**
+   * Adapta la data plana del formulario a la estructura anidada que pueda requerir el backend
+   * si tus modelos de backend esperan objetos separados (ej: { user: {...}, operational: {...} })
+   * Si tu backend maneja todo plano en el body, esto no es necesario.
+   */
+  private preparePayload(formValue: any): any {
+    // Si tu backend espera, por ejemplo, los teléfonos como array:
+    if (formValue.phones && typeof formValue.phones === 'string') {
+      formValue.phones = [formValue.phones];
+    }
+    return formValue;
+  }
+
+  onReset() {
+    this.formData.reset({
+      status: 'inactive'
+    });
+    this.isOperational = false;
+    this.isClientManager = false;
+    this.isAdministrative = false;
+  }
+
+  ngOnDestroy() {
+    this.roleSubscription?.unsubscribe();
+    this.submitSubscription?.unsubscribe();
+  }
+}

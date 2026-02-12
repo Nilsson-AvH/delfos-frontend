@@ -8,6 +8,8 @@ import { AdministrativeUserNewForm } from './features/pages/users/administrative
 import { ClientManagerUserNewForm } from './features/pages/users/client-manager-user-new-form/client-manager-user-new-form';
 import { Dashboard } from './features/pages/dashboard/dashboard';
 import { AdministrativeUserEditForm } from './features/pages/users/administrative-user-edit-form/administrative-user-edit-form';
+import { authGuard } from './core/guards/auth-guard';
+import { UserNewForm } from './features/pages/users/user-new-form/user-new-form';
 
 export const routes: Routes = [
     // Rutas de home
@@ -17,8 +19,9 @@ export const routes: Routes = [
     { path: 'register', component: Register },
     { path: '404', component: PageNotFound },
     // Rutas de dashboard usuarios
-    { path: 'dashboard', component: Dashboard },
+    { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
     { path: 'dashboard/users', component: UsersList },
+    { path: 'dashboard/users/new', component: UserNewForm },
     { path: 'dashboard/administrative-user/new', component: AdministrativeUserNewForm },
     { path: 'dashboard/client-manager-user/new', component: ClientManagerUserNewForm },
     { path: 'dashboard/administrative-user/edit/:id', component: AdministrativeUserEditForm },
