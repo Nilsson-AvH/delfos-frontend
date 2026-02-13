@@ -21,8 +21,17 @@ export class Header {
     private router: Router
   ) { }
 
+
   // --- ESTADO DEL MENÚ PRINCIPAL (Hamburguesa) ---
   isMenuOpen = false;
+
+  // --- ESTADO DEL USUARIO --- TEST
+  ngOnInit(): void {
+    this.httpAuth.currentUser$.subscribe((user) => {
+      console.log('🟢 HttpAuth currentUser$', user);
+    });
+  }
+  // FIN DEL TEST
 
   // --- ESTADO DE LOS SUBMENÚS (Acordeón) ---
   // Guardaremos el nombre del menú abierto (ej: 'users', 'clients'). 

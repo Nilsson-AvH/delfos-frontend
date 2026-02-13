@@ -57,8 +57,10 @@
 
     <!-- Desplegar la informacion del usuario autenticado en funcion de si esta autenticado -->
     @if (httpAuth.currentUser$ | async; as user){
-    <div class="user-info">
-        <p>Bienvenido, {{user.names}} {{user.role}} </p>
+    <!-- {{user}} -->
+    <div class="navbar-right">
+        <!-- Cambiar el hola por bienvenido o bienvenida segun el genero(crear genero en el backend) -->
+        <a class="menu-hello">Hola, {{user.name}}</a>
         <div class="navbar-right">
             <button class="logout-btn" (click)="onLogout()">
                 Log Out

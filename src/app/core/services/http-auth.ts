@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { User } from '../interfaces/user';
-import { BehaviorSubject, catchError, Observable, of, tap } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of, tap } from 'rxjs';
 import { ResponseLogin } from '../interfaces/response-login';
 import { environment } from '../../../environments/environment';
 
@@ -46,7 +46,7 @@ export class HttpAuth {
       );
   }
 
-  saveLocalStorage(token: string, userData: any) {
+  saveLocalStorageData(token: string, userData: any) {
     localStorage.setItem('token', token); // Token en el storage
     localStorage.setItem('userData', JSON.stringify(userData)); // Usuario en el storage
     this.currentUser.next(userData);
@@ -78,7 +78,7 @@ export class HttpAuth {
     this.clearLocalStorageData();
   }
 
-  checkAuthStatus() {
+  checkAuthStatus(): Observable<boolean> {
 
     // Paso 1 : Obtener el token del local storage si este existe y responder al cliente.
 
@@ -88,18 +88,26 @@ export class HttpAuth {
     // Si el token no existe, redirigir al login.
     if (!token) {
       this.clearLocalStorageData(); // Limpiar el local storage
-      return false; // No permitir el acceso a la ruta protegida
+      return of(false); // No permitir el acceso a la ruta protegida
     }
 
     // Paso 2 : Crear el encabezado con el nombre X-Token y el valor del token que sera enviado al backend.
     const headers = new HttpHeaders().set('X-Token', token);
 
     // Paso 3 : Realizar una solicitud GET al endpoint /v1/auth/renew-token para verificar la validez del token.
-    return this.http.get(`${this.apiUrl}/v1/auth/renew-token`, { headers }) // este endpoint debe retornar un nuevo token y el usuario.
-
-
-
-    return true;
+    return this.http.get<any>(`${this.apiUrl}/v1/auth/renew-token`, { headers }).pipe( // este endpoint debe retornar un nuevo token y el usuario.
+      map((response) => {
+        if (!response.token && !response.user) {
+          return false; // Bloquea el acceso a la ruta protegida, retorna Observable<false>
+        }
+        this.saveLocalStorageData(response.token, response.user); // Actualiza los datos en el local storage
+        return true; // Permite el acceso a la ruta protegida, retorna Observable<true>
+      }),
+      catchError((error) => {
+        this.clearLocalStorageData(); // Limpiar el local storage
+        return of(false); // No permitir el acceso a la ruta protegida toca obligarlo a que retorne un Observable<false>
+      })
+    );
   }
 
 

@@ -33,7 +33,7 @@ export class Login {
           console.log("Usuario logueado exitosamente", response);
 
           if (response.token && response.user) {
-            this.httpAuth.saveLocalStorage(response.token, response.user); // Guarda datos en el localStorage
+            this.httpAuth.saveLocalStorageData(response.token, response.user); // Guarda datos en el localStorage
             this.router.navigate(['/dashboard']); // Redirecciona a la pagina de dashboard
 
           }

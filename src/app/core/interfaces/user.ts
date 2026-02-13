@@ -41,6 +41,7 @@ export type UserStatus = 'active' | 'inactive' | 'suspended';
 export interface UserBase {
     _id?: string;
     nuip: string;
+    name: string;
     names: string;
     lastName: string;
     secondLastName?: string;

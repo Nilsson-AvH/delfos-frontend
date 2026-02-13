@@ -2,37 +2,39 @@
     {{ users$ | async | json }}
 </pre> -->
 
-<h2>Users List</h2>
+<div class="container-list">
+    <h2>Users List</h2>
 
-<table>
-    <tr>
-        <th>Document</th>
-        <th>1st Last Name</th>
-        <th>2nd Last Name</th>
-        <th>Names</th>
-        <th>Job Title</th>
-        <th>Role</th>
-        <th>Actions</th>
-    </tr>
-    @for(user of (users$ | async); track $index) {
-    <tr>
-        <td>{{ user.nuip }}</td>
-        <td>{{ user.lastName }}</td>
-        <td>{{ user.secondLastName }}</td>
-        <td>{{ user.names }}</td>
-        <td>{{ user.jobTitle }}</td>
-        <td>{{ user.role }}</td>
-        <td>
-            <!-- ✅ APLICANDO LAS NUEVAS CLASES -->
-            <div class="action-buttons">
-                <button type="button" class="btn-action edit" (click)="onEdit(user.id)">
-                    Edit
-                </button>
-                <button type="button" class="btn-action delete" (click)="onDelete(user.id)">
-                    Delete
-                </button>
-            </div>
-        </td>
-    </tr>
-    }
-</table>
+    <table>
+        <tr>
+            <th>Document</th>
+            <th>1st Last Name</th>
+            <th>2nd Last Name</th>
+            <th>Names</th>
+            <th>Job Title</th>
+            <th>Role</th>
+            <th>Actions</th>
+        </tr>
+        @for(user of (users$ | async); track $index) {
+        <tr>
+            <td>{{ user.nuip }}</td>
+            <td>{{ user.lastName }}</td>
+            <td>{{ user.secondLastName }}</td>
+            <td>{{ user.names }}</td>
+            <td>{{ user.jobTitle }}</td>
+            <td>{{ user.role }}</td>
+            <td>
+                <!-- ✅ APLICANDO LAS NUEVAS CLASES -->
+                <div class="action-buttons">
+                    <button type="button" class="btn-action edit" (click)="onEdit(user.id)">
+                        Edit
+                    </button>
+                    <button type="button" class="btn-action delete" (click)="onDelete(user.id)">
+                        Delete
+                    </button>
+                </div>
+            </td>
+        </tr>
+        }
+    </table>
+</div>

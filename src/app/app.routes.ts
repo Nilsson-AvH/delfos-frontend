@@ -20,11 +20,11 @@ export const routes: Routes = [
     { path: '404', component: PageNotFound },
     // Rutas de dashboard usuarios
     { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
-    { path: 'dashboard/users', component: UsersList },
-    { path: 'dashboard/users/new', component: UserNewForm },
-    { path: 'dashboard/administrative-user/new', component: AdministrativeUserNewForm },
-    { path: 'dashboard/client-manager-user/new', component: ClientManagerUserNewForm },
-    { path: 'dashboard/administrative-user/edit/:id', component: AdministrativeUserEditForm },
+    { path: 'dashboard/users', component: UsersList, canActivate: [authGuard] },
+    { path: 'dashboard/users/new', component: UserNewForm, canActivate: [authGuard] },
+    { path: 'dashboard/administrative-user/new', component: AdministrativeUserNewForm, canActivate: [authGuard] },
+    { path: 'dashboard/client-manager-user/new', component: ClientManagerUserNewForm, canActivate: [authGuard] },
+    { path: 'dashboard/administrative-user/edit/:id', component: AdministrativeUserEditForm, canActivate: [authGuard] },
     // Las redirecciones deben ir al final
     { path: '', redirectTo: 'home', pathMatch: 'full' },
     { path: '**', redirectTo: '404', pathMatch: 'full' }

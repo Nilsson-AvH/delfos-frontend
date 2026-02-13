@@ -88,6 +88,11 @@ body {
     color: var(--primary-color);
 }
 
+.navbar-right {
+    display: flex;
+    /* gap: 1rem; */
+}
+
 /* --- BOTÓN HAMBURGUESA (NUEVO) --- */
 /* Por defecto está OCULTO (display: none) porque estamos en PC.
    Solo aparecerá cuando entremos en modo móvil (ver @media abajo) */
@@ -141,6 +146,24 @@ body {
     border-bottom: 3px solid transparent;
     /* Línea invisible lista para el hover */
     user-select: none;
+    /* Evita que se seleccione el texto al dar doble click */
+}
+
+.menu-hello {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0 1.2rem;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    /* cursor: pointer; */
+    transition: all 0.2s;
+    /* Suaviza el cambio de color */
+    /* border-bottom: 3px solid transparent; */
+    /* Línea invisible lista para el hover */
+    /* user-select: none; */
     /* Evita que se seleccione el texto al dar doble click */
 }
 
@@ -435,6 +458,11 @@ button.reset:hover {
 /* ==================================================
 === Category List Styles ===
 ================================================== */
+.container-list {
+    margin-left: 40px;
+    margin-right: 40px;
+}
+
 table {
     font-family: arial, sans-serif;
     border-collapse: collapse;
