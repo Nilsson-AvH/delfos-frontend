@@ -81,12 +81,62 @@ export class UserNewForm implements OnInit, OnDestroy {
 
   private removeSpecificControls() {
     const controlsToRemove = [
-      'jobTitle',
-      'birthDate', 'birthPlace', 'issueDate', 'issuePlace', 'nationality', // Comunes Operativo/Manager
-      'gender', 'maritalStatus', 'address', 'neighborhood', 'phones',
-      'height', 'weight', 'housingType', 'hasVehicle', 'driversLicense', 'vehicleType', 'licenseCategory', // Específicos Operativo
-      'emergencyContact', 'emergencyContactPhone', 'emergencyContactRelationship', // Específicos Operativo
-      // 'currentClient', 'currentContract', 'currentSocialSecurity', // Específicos Operativo
+      // ===== CAMPOS ADMINISTRATIVOS =====
+      'jobTitle', // Se usa en Admin Y Operational (por eso debe estar aquí)
+
+      // ===== CAMPOS COMUNES (ClientManager + Operational) =====
+      'birthDate',
+      'birthPlace',
+      'issueDate',
+      'issuePlace',
+      'nationality',
+      'phones',
+      'address',
+
+      // ===== CAMPOS ESPECÍFICOS DE OPERATIONAL =====
+      // Operational Details
+      'gender',
+      'maritalStatus',
+      'height',
+      'weight',
+      'housingType',
+      'neighborhood',
+
+      // Job Assignment
+      'clientId',
+
+      // Contract Information
+      'contractContent',
+      'contractValue',
+      'contractTermMonths',
+      'startDate',
+      'endDate',
+
+      // Social Security
+      'arl',
+      'arlRisk',
+      'arlDate',
+      'eps',
+      'epsDate',
+      'compensationFund',
+      'compensationDate',
+      'pensionFund',
+      'pensionDate',
+      'severanceFund',
+      'severanceDate',
+      'lifeInsurance',
+      'lifeInsuranceDate',
+
+      // Mobility Data
+      'hasVehicle',
+      'driversLicense',
+      'vehicleType',
+      'licenseCategory',
+
+      // Emergency Contact
+      'emergencyContact',
+      'emergencyContactPhone',
+      'emergencyContactRelationship',
     ];
     controlsToRemove.forEach(controlName => {
       if (this.formData.contains(controlName)) {
@@ -126,7 +176,30 @@ export class UserNewForm implements OnInit, OnDestroy {
     // Lo ideal seria tener pasos (Wizard) o pestañas, pero por ahora irán aquí si son obligatorios.
     // O se pueden crear en null y llenar luego en la edición.
 
-    // Mobility Details
+    // Asignacion de puesto al trabajador
+    this.formData.addControl('clientId', new FormControl(''));
+    // Contrato inicial
+    this.formData.addControl('jobTitle', new FormControl(''));
+    this.formData.addControl('contractContent', new FormControl(''));
+    this.formData.addControl('contractValue', new FormControl(''));
+    this.formData.addControl('contractTermMonths', new FormControl(''));
+    this.formData.addControl('startDate', new FormControl(''));
+    this.formData.addControl('endDate', new FormControl(''));
+    // Social Security
+    this.formData.addControl('arl', new FormControl(''));
+    this.formData.addControl('arlRisk', new FormControl(''));
+    this.formData.addControl('arlDate', new FormControl(''));
+    this.formData.addControl('eps', new FormControl(''));
+    this.formData.addControl('epsDate', new FormControl(''));
+    this.formData.addControl('compensationFund', new FormControl(''));
+    this.formData.addControl('compensationDate', new FormControl(''));
+    this.formData.addControl('pensionFund', new FormControl(''));
+    this.formData.addControl('pensionDate', new FormControl(''));
+    this.formData.addControl('severanceFund', new FormControl(''));
+    this.formData.addControl('severanceDate', new FormControl(''));
+    this.formData.addControl('lifeInsurance', new FormControl(''));
+    this.formData.addControl('lifeInsuranceDate', new FormControl(''));
+    // Mobility Data
     this.formData.addControl('hasVehicle', new FormControl(false));
     this.formData.addControl('driversLicense', new FormControl(false));
     this.formData.addControl('vehicleType', new FormControl(''));

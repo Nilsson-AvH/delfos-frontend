@@ -127,6 +127,7 @@
     </fieldset>
     }
 
+    <!-- OPERATIONAL DETAILS -->
     @if (isOperational) {
     <fieldset class="fade-in">
         <legend>Operational Details</legend>
@@ -177,67 +178,166 @@
         </div>
     </fieldset>
 
+    <!-- SOCIAL SECURITY -->
     <fieldset>
-        <legend>Job Assignment</legend>
-        Campos de asignación de puesto al trabajador.
+        <legend>Social Security</legend>
+        <div class="field">
+            <label for="arl">ARL</label>
+            <input type="text" id="arl" formControlName="arl">
+        </div>
+        <div class="field">
+            <label for="arlRiskLevel">ARL Risk Level</label>
+            <input type="text" id="arlRiskLevel" formControlName="arlRiskLevel">
+        </div>
+        <div class="field">
+            <label for="arlDate">ARL Date</label>
+            <input type="date" id="arlDate" formControlName="arlDate">
+        </div>
+        <div class="field">
+            <label for="eps">EPS</label>
+            <input type="text" id="eps" formControlName="eps">
+        </div>
+        <div class="field">
+            <label for="epsDate">EPS Date</label>
+            <input type="date" id="epsDate" formControlName="epsDate">
+        </div>
+        <div class="field">
+            <label for="compensationFund">Compensation Fund</label>
+            <input type="text" id="compensationFund" formControlName="compensationFund">
+        </div>
+        <div class="field">
+            <label for="compensationDate">Compensation Date</label>
+            <input type="date" id="compensationDate" formControlName="compensationDate">
+        </div>
+        <div class="field">
+            <label for="pensionFund">Pension Fund</label>
+            <input type="text" id="pensionFund" formControlName="pensionFund">
+        </div>
+        <div class="field">
+            <label for="pensionDate">Pension Date</label>
+            <input type="date" id="pensionDate" formControlName="pensionDate">
+        </div>
+        <div class="field">
+            <label for="severanceFund">Severance Fund</label>
+            <input type="text" id="severanceFund" formControlName="severanceFund">
+        </div>
+        <div class="field">
+            <label for="severanceDate">Severance Date</label>
+            <input type="date" id="severanceDate" formControlName="severanceDate">
+        </div>
+        <div class="field">
+            <label for="lifeInsurance">Life Insurance</label>
+            <input type="text" id="lifeInsurance" formControlName="lifeInsurance">
+        </div>
+        <div class="field">
+            <label for="lifeInsuranceDate">Life Insurance Date</label>
+            <input type="date" id="lifeInsuranceDate" formControlName="lifeInsuranceDate">
+        </div>
     </fieldset>
 
+    <div>
 
-    <fieldset>
-        <legend>Mobility Data</legend>
-        <!-- Vehicle Data -->
+        <!-- Asignacion de puesto al trabajador -->
+        <fieldset>
+            <legend>Job Assignment</legend>
+            <div class="field">
+                <label for="clientId">Client</label>
+                <input type="text" id="clientId" formControlName="clientId">
+            </div>
+        </fieldset>
 
-        <div class="field-checkbox">
-            <label>
-                <input type="checkbox" formControlName="hasVehicle"> Has Vehicle?
-            </label>
-            <label>
-                <input type="checkbox" formControlName="driversLicense"> Drivers License?
-            </label>
-        </div>
+        <br>
 
-        <div class="field">
-            <label>Vehicle Type</label>
-            <select formControlName="vehicleType">
-                <option value="Automovil">Car</option>
-                <option value="Moto">Motorcycle</option>
-                <option value="Bicicleta">Bicycle</option>
-                <option value="Ninguno">None</option>
-            </select>
-        </div>
+        <!-- Contrato inicial -->
+        <fieldset>
+            <legend>Contract</legend>
+            <div class="field">
+                <label for="jobTitle">Job Title</label>
+                <input type="text" id="jobTitle" formControlName="jobTitle">
+            </div>
+            <div class="field">
+                <label for="contractContent">Contract Add Content</label>
+                <input type="text" id="contractContent" formControlName="contractContent">
+            </div>
+            <div class="field">
+                <label for="contractValue">Contract Value</label>
+                <input type="text" id="contractValue" formControlName="contractValue">
+            </div>
+            <div class="field">
+                <label for="contractTermMonths">Contract Term Months</label>
+                <input type="text" id="contractTermMonths" formControlName="contractTermMonths">
+            </div>
+            <div class="field">
+                <label for="startDate">Contract Start Date</label>
+                <input type="date" id="startDate" formControlName="startDate">
+            </div>
+            <div class="field">
+                <label for="endDate">Contract End Date</label>
+                <input type="date" id="endDate" formControlName="endDate">
+            </div>
+        </fieldset>
 
-        <div class="field">
-            <label>License Category</label>
-            <select formControlName="licenseCategory">
-                <option value="A1">A1</option>
-                <option value="A2">A2</option>
-                <option value="B1">B1</option>
-                <option value="B2">B2</option>
-                <option value="C1">C1</option>
-                <option value="C2">C2</option>
-                <option value="N/A">N/A</option>
-            </select>
-        </div>
-    </fieldset>
+        <br>
 
-    <fieldset>
-        <legend>Emergency Contact</legend>
+        <!-- Mobility Data -->
+        <fieldset>
+            <legend>Mobility Data</legend>
 
-        <div class="field">
-            <label>Emergency Contact</label>
-            <input type="text" formControlName="emergencyContact">
-        </div>
+            <div class="field-checkbox">
+                <label>
+                    <input type="checkbox" formControlName="hasVehicle"> Has Vehicle?
+                </label>
+                <label>
+                    <input type="checkbox" formControlName="driversLicense"> Drivers License?
+                </label>
+            </div>
 
-        <div class="field">
-            <label>Emergency Contact Phone</label>
-            <input type="tel" formControlName="emergencyContactPhone">
-        </div>
+            <div class="field">
+                <label>Vehicle Type</label>
+                <select formControlName="vehicleType">
+                    <option value="Automovil">Car</option>
+                    <option value="Moto">Motorcycle</option>
+                    <option value="Bicicleta">Bicycle</option>
+                    <option value="Ninguno">None</option>
+                </select>
+            </div>
 
-        <div class="field">
-            <label>Emergency Contact Relationship</label>
-            <input type="text" formControlName="emergencyContactRelationship">
-        </div>
-    </fieldset>
+            <div class="field">
+                <label>License Category</label>
+                <select formControlName="licenseCategory">
+                    <option value="A1">A1</option>
+                    <option value="A2">A2</option>
+                    <option value="B1">B1</option>
+                    <option value="B2">B2</option>
+                    <option value="C1">C1</option>
+                    <option value="C2">C2</option>
+                    <option value="N/A">N/A</option>
+                </select>
+            </div>
+        </fieldset>
+
+        <br>
+
+        <!-- EMERGENCY CONTACT -->
+        <fieldset>
+            <legend>Emergency Contact</legend>
+
+            <div class="field">
+                <label>Emergency Contact</label>
+                <input type="text" formControlName="emergencyContact">
+            </div>
+
+            <div class="field">
+                <label>Emergency Contact Phone</label>
+                <input type="tel" formControlName="emergencyContactPhone">
+            </div>
+
+            <div class="field">
+                <label>Emergency Contact Relationship</label>
+                <input type="text" formControlName="emergencyContactRelationship">
+            </div>
+        </fieldset>
+    </div>
 
     }
 
