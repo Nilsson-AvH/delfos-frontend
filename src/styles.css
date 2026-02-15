@@ -293,6 +293,65 @@ body {
 /* =========================================
    FORMULARIO & COMPONENTES (Estilo Tarjeta)
    ========================================= */
+
+.header-formData {
+    /* Ocupar ambas columnas del grid */
+    grid-column: 1 / -1;
+
+    /* Flexbox para alinear H1 a la izquierda y botones a la derecha */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    /* Espaciado y estilo */
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.header-actionsformData h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--text-main);
+}
+
+.header-actionsformData .controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Estilos para los botones de control */
+.btn-enable-edit,
+.btn-cancel-edit {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid var(--border-color);
+}
+
+.btn-enable-edit {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.btn-enable-edit:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-cancel-edit {
+    background-color: white;
+    color: var(--text-muted);
+}
+
+.btn-cancel-edit:hover {
+    background-color: var(--bg-app);
+    border-color: var(--text-muted);
+}
+
 form {
     background-color: var(--bg-surface);
     max-width: 900px;
@@ -318,7 +377,7 @@ form h1 {
     margin-bottom: 1.5rem;
     font-size: 1.5rem;
     color: var(--text-main);
-    border-bottom: 1px solid var(--bg-app);
+    /* border-bottom: 1px solid var(--bg-app); */
     padding-bottom: 1rem;
 }
 

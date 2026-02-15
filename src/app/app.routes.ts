@@ -9,7 +9,9 @@ import { ClientManagerUserNewForm } from './features/pages/users/client-manager-
 import { Dashboard } from './features/pages/dashboard/dashboard';
 import { AdministrativeUserEditForm } from './features/pages/users/administrative-user-edit-form/administrative-user-edit-form';
 import { authGuard } from './core/guards/auth-guard';
+// Rutas de usuarios
 import { UserNewForm } from './features/pages/users/user-new-form/user-new-form';
+import { UserEditForm } from './features/pages/users/user-edit-form/user-edit-form';
 
 export const routes: Routes = [
     // Rutas de home
@@ -22,6 +24,7 @@ export const routes: Routes = [
     { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
     { path: 'dashboard/users', component: UsersList, canActivate: [authGuard] },
     { path: 'dashboard/users/new', component: UserNewForm, canActivate: [authGuard] },
+    { path: 'dashboard/users/edit/:id', component: UserEditForm, canActivate: [authGuard] },
     { path: 'dashboard/administrative-user/new', component: AdministrativeUserNewForm, canActivate: [authGuard] },
     { path: 'dashboard/client-manager-user/new', component: ClientManagerUserNewForm, canActivate: [authGuard] },
     { path: 'dashboard/administrative-user/edit/:id', component: AdministrativeUserEditForm, canActivate: [authGuard] },

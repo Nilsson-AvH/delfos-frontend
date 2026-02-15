@@ -21,14 +21,21 @@
                 Users <span class="arrow">▼</span>
             </a>
             <ul class="dropdown-content">
-                <li><a routerLink="/dashboard/users" (click)="closeMenu()">List Users</a></li>
+                <li><a routerLink="/dashboard/users" (click)="closeMenu()">
+                        List Users
+                    </a></li>
                 <li class="divider"></li>
-                <li><a routerLink="/dashboard/users/new" (click)="closeMenu()">New User</a></li>
-                <li><a routerLink="/dashboard/administrative-user/new" (click)="closeMenu()">New Admin User</a></li>
-                <li><a routerLink="/dashboard/client-manager-user/new" (click)="closeMenu()">New Client Manager</a></li>
-                <li class="divider"></li>
-                <li><a [routerLink]="['/dashboard','user','edit','HY87Y65']" (click)="closeMenu()">Edit User (Test)</a>
-                </li>
+                <li><a routerLink="/dashboard/users/new" (click)="closeMenu()">
+                        New User
+                    </a></li>
+                <!-- <li class="divider"></li> -->
+                <!-- <li><a routerLink="/dashboard/administrative-user/new" (click)="closeMenu()">
+                        New Admin User
+                    </a></li>
+                <li><a routerLink="/dashboard/client-manager-user/new" (click)="closeMenu()">
+                        New Client Manager
+                    </a></li>
+                <li class="divider"></li> -->
             </ul>
         </li>
 
@@ -37,8 +44,12 @@
                 Clients <span class="arrow">▼</span>
             </a>
             <ul class="dropdown-content">
-                <li><a routerLink="/dashboard/clients" (click)="closeMenu()">List Clients</a></li>
-                <li><a routerLink="/dashboard/clients/new" (click)="closeMenu()">New Client</a></li>
+                <li><a routerLink="/dashboard/clients" (click)="closeMenu()">
+                        List Clients
+                    </a></li>
+                <li><a routerLink="/dashboard/clients/new" (click)="closeMenu()">
+                        New Client
+                    </a></li>
             </ul>
         </li>
 
@@ -47,8 +58,12 @@
                 Documents <span class="arrow">▼</span>
             </a>
             <ul class="dropdown-content">
-                <li><a routerLink="/dashboard/documents/upload" (click)="closeMenu()">Upload Documents</a></li>
-                <li><a routerLink="/dashboard/documents/generate" (click)="closeMenu()">Generate Docs</a></li>
+                <li><a routerLink="/dashboard/documents/upload" (click)="closeMenu()">
+                        Upload Documents
+                    </a></li>
+                <li><a routerLink="/dashboard/documents/generate" (click)="closeMenu()">
+                        Generate Docs
+                    </a></li>
             </ul>
         </li>
     </ul>

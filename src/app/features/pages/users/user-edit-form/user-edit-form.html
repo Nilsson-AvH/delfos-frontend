@@ -1,1 +1,358 @@
-<p>user-edit-form works!</p>
+<form [formGroup]="formData" (ngSubmit)="onSubmit()" [class.read-only-mode]="!isEditing">
+
+    <div class="header-formData">
+        <h1>
+            @if(isEditing) { ✏️ Edit User } @else { 👤 User Details }
+        </h1>
+
+        <div class="controls">
+            @if(!isEditing) {
+            <button type="button" class="btn-enable-edit" (click)="toggleEditMode()">
+                Unlock to Edit
+            </button>
+            } @else {
+            <button type="button" class="btn-cancel-edit" (click)="toggleEditMode()">
+                Cancel Editing
+            </button>
+            }
+        </div>
+    </div>
+
+    <fieldset>
+        <legend>System Access</legend>
+
+        <div class="field">
+            <label>Role (Immutable)</label>
+            <select formControlName="role">
+                <option value="">Select Role</option>
+                <option value="superadmin">System Super Admin</option>
+                <option value="admin">System Admin</option>
+                <option value="auditor">Auditor</option>
+                <option value="operational">Operative Staff</option>
+                <option value="clientManager">Client Manager</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Email (Immutable)</label>
+            <input type="email" formControlName="email">
+        </div>
+
+        <div class="field">
+            <label>Status</label>
+            <div class="radio-group">
+                <label><input type="radio" formControlName="status" value="active"> Active</label>
+                <label><input type="radio" formControlName="status" value="inactive"> Inactive</label>
+                <label><input type="radio" formControlName="status" value="suspended"> Suspended</label>
+            </div>
+        </div>
+
+        @if(isEditing) {
+        <div class="field-row fade-in">
+            <div class="field">
+                <label>New Password (Optional)</label>
+                <input type="password" formControlName="password" placeholder="Leave blank to keep current">
+            </div>
+            <div class="field">
+                <label>Confirm New Password</label>
+                <input type="password" formControlName="confirmPassword">
+            </div>
+        </div>
+        }
+    </fieldset>
+
+    <fieldset>
+        <legend>Personal Information</legend>
+        <div class="field">
+            <label>NUIP (Document ID) (Immutable)</label>
+            <input type="text" formControlName="nuip">
+        </div>
+        <div class="field">
+            <label>Names</label>
+            <input type="text" formControlName="names">
+        </div>
+        <div class="field-row">
+            <div class="field">
+                <label>First Last Name</label>
+                <input type="text" formControlName="lastName">
+            </div>
+            <div class="field">
+                <label>Second Last Name</label>
+                <input type="text" formControlName="secondLastName">
+            </div>
+        </div>
+    </fieldset>
+
+    @if (isAdministrative) {
+    <fieldset class="fade-in">
+        <legend>Administrative Details</legend>
+        <div class="field">
+            <label>Job Title</label>
+            <input type="text" formControlName="jobTitle">
+        </div>
+    </fieldset>
+    }
+
+    @if (isOperational || isClientManager) {
+    <fieldset class="fade-in">
+        <legend>Extended Data</legend>
+        <div class="field-row">
+            <div class="field">
+                <label>Birth Date</label>
+                <input type="date" formControlName="birthDate">
+            </div>
+            <div class="field">
+                <label>Birth Place</label>
+                <input type="text" formControlName="birthPlace">
+            </div>
+        </div>
+        <div class="field-row">
+            <div class="field">
+                <label>Issue Date (ID)</label>
+                <input type="date" formControlName="issueDate">
+            </div>
+            <div class="field">
+                <label>Issue Place (ID)</label>
+                <input type="text" formControlName="issuePlace">
+            </div>
+        </div>
+        <div class="field">
+            <label>Nationality</label>
+            <input type="text" formControlName="nationality">
+        </div>
+        <div class="field">
+            <label>Address</label>
+            <input type="text" formControlName="address">
+        </div>
+        <div class="field">
+            <label>Phone Number</label>
+            <input type="tel" formControlName="phones">
+        </div>
+    </fieldset>
+    }
+
+    @if (isOperational) {
+    <fieldset class="fade-in">
+        <legend>Operational Specifics</legend>
+        <div class="field-row">
+            <div class="field">
+                <label>Gender</label>
+                <select formControlName="gender">
+                    <option value="Hombre">Male</option>
+                    <option value="Mujer">Female</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>Marital Status</label>
+                <select formControlName="maritalStatus">
+                    <option value="Soltero">Single</option>
+                    <option value="Casado">Married</option>
+                    <option value="Union Libre">Free Union</option>
+                    <option value="Divorciado">Divorced</option>
+                    <option value="Viudo">Widowed</option>
+                </select>
+            </div>
+        </div>
+        <div class="field-row">
+            <div class="field">
+                <label>Height (cm)</label>
+                <input type="number" formControlName="height">
+            </div>
+            <div class="field">
+                <label>Weight (kg)</label>
+                <input type="number" formControlName="weight">
+            </div>
+        </div>
+        <div class="field">
+            <label>Housing Type</label>
+            <select formControlName="housingType">
+                <option value="Propio">Owned</option>
+                <option value="Familiar">Family</option>
+                <option value="Alquilado">Rented</option>
+                <option value="Otro">Other</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Neighborhood</label>
+            <input type="text" formControlName="neighborhood">
+        </div>
+    </fieldset>
+
+    <!-- SOCIAL SECURITY -->
+    <fieldset>
+        <legend>Social Security</legend>
+        <div class="field">
+            <label for="arl">ARL</label>
+            <input type="text" id="arl" formControlName="arl">
+        </div>
+        <div class="field">
+            <label for="arlRisk">ARL Risk Level</label>
+            <select id="arlRisk" formControlName="arlRisk">
+                <option value="R1">R1</option>
+                <option value="R2">R2</option>
+                <option value="R3">R3</option>
+                <option value="R4">R4</option>
+                <option value="R5">R5</option>
+            </select>
+        </div>
+        <div class="field">
+            <label for="arlDate">ARL Date</label>
+            <input type="date" id="arlDate" formControlName="arlDate">
+        </div>
+        <div class="field">
+            <label for="eps">EPS</label>
+            <input type="text" id="eps" formControlName="eps">
+        </div>
+        <div class="field">
+            <label for="epsDate">EPS Date</label>
+            <input type="date" id="epsDate" formControlName="epsDate">
+        </div>
+        <div class="field">
+            <label for="compensationFund">Compensation Fund</label>
+            <input type="text" id="compensationFund" formControlName="compensationFund">
+        </div>
+        <div class="field">
+            <label for="compensationDate">Compensation Date</label>
+            <input type="date" id="compensationDate" formControlName="compensationDate">
+        </div>
+        <div class="field">
+            <label for="pensionFund">Pension Fund</label>
+            <input type="text" id="pensionFund" formControlName="pensionFund">
+        </div>
+        <div class="field">
+            <label for="pensionDate">Pension Date</label>
+            <input type="date" id="pensionDate" formControlName="pensionDate">
+        </div>
+        <div class="field">
+            <label for="severanceFund">Severance Fund</label>
+            <input type="text" id="severanceFund" formControlName="severanceFund">
+        </div>
+        <div class="field">
+            <label for="severanceDate">Severance Date</label>
+            <input type="date" id="severanceDate" formControlName="severanceDate">
+        </div>
+        <div class="field">
+            <label for="lifeInsurance">Life Insurance</label>
+            <input type="text" id="lifeInsurance" formControlName="lifeInsurance">
+        </div>
+        <div class="field">
+            <label for="lifeInsuranceDate">Life Insurance Date</label>
+            <input type="date" id="lifeInsuranceDate" formControlName="lifeInsuranceDate">
+        </div>
+
+    </fieldset>
+
+    <div>
+
+        <!-- Asignacion de puesto al trabajador -->
+        <fieldset>
+            <legend>Job Assignment</legend>
+            <div class="field">
+                <label for="clientId">Client</label>
+                <input type="text" id="clientId" formControlName="clientId">
+            </div>
+        </fieldset>
+
+        <br>
+
+        <!-- Contrato inicial -->
+        <fieldset>
+            <legend>Contract</legend>
+            <div class="field">
+                <label for="jobTitle">Job Title</label>
+                <input type="text" id="jobTitle" formControlName="jobTitle">
+            </div>
+            <div class="field">
+                <label for="contractContent">Contract Add Content</label>
+                <input type="text" id="contractContent" formControlName="contractContent">
+            </div>
+            <div class="field">
+                <label for="contractValue">Contract Value</label>
+                <input type="text" id="contractValue" formControlName="contractValue">
+            </div>
+            <div class="field">
+                <label for="contractTermMonths">Contract Term Months</label>
+                <input type="text" id="contractTermMonths" formControlName="contractTermMonths">
+            </div>
+            <div class="field">
+                <label for="startDate">Contract Start Date</label>
+                <input type="date" id="startDate" formControlName="startDate">
+            </div>
+            <div class="field">
+                <label for="endDate">Contract End Date</label>
+                <input type="date" id="endDate" formControlName="endDate">
+            </div>
+        </fieldset>
+
+        <br>
+
+        <!-- Mobility Data -->
+        <fieldset>
+            <legend>Mobility Data</legend>
+
+            <div class="field-checkbox">
+                <label>
+                    <input type="checkbox" formControlName="hasVehicle"> Has Vehicle?
+                </label>
+                <label>
+                    <input type="checkbox" formControlName="driversLicense"> Drivers License?
+                </label>
+            </div>
+
+            <div class="field">
+                <label>Vehicle Type</label>
+                <select formControlName="vehicleType">
+                    <option value="Automovil">Car</option>
+                    <option value="Moto">Motorcycle</option>
+                    <option value="Bicicleta">Bicycle</option>
+                    <option value="Ninguno">None</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>License Category</label>
+                <select formControlName="licenseCategory">
+                    <option value="A1">A1</option>
+                    <option value="A2">A2</option>
+                    <option value="B1">B1</option>
+                    <option value="B2">B2</option>
+                    <option value="C1">C1</option>
+                    <option value="C2">C2</option>
+                    <option value="N/A">N/A</option>
+                </select>
+            </div>
+        </fieldset>
+
+        <br>
+
+        <!-- EMERGENCY CONTACT -->
+        <fieldset>
+            <legend>Emergency Contact</legend>
+
+            <div class="field">
+                <label>Emergency Contact</label>
+                <input type="text" formControlName="emergencyContact">
+            </div>
+
+            <div class="field">
+                <label>Emergency Contact Phone</label>
+                <input type="tel" formControlName="emergencyContactPhone">
+            </div>
+
+            <div class="field">
+                <label>Emergency Contact Relationship</label>
+                <input type="text" formControlName="emergencyContactRelationship">
+            </div>
+        </fieldset>
+    </div>
+
+    }
+
+    @if(isEditing) {
+    <div class="field buttons fade-in">
+        <button class="register" type="submit" [disabled]="formData.invalid">Save Changes</button>
+        <button class="reset" type="button" (click)="toggleEditMode()">Cancel</button>
+    </div>
+    }
+</form>

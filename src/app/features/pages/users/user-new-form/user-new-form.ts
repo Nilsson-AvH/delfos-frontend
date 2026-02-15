@@ -186,12 +186,12 @@ export class UserNewForm implements OnInit, OnDestroy {
     this.formData.addControl('startDate', new FormControl(''));
     this.formData.addControl('endDate', new FormControl(''));
     // Social Security
-    this.formData.addControl('arl', new FormControl(''));
+    this.formData.addControl('arl', new FormControl('AXA Colpatria'));
     this.formData.addControl('arlRisk', new FormControl(''));
     this.formData.addControl('arlDate', new FormControl(''));
     this.formData.addControl('eps', new FormControl(''));
     this.formData.addControl('epsDate', new FormControl(''));
-    this.formData.addControl('compensationFund', new FormControl(''));
+    this.formData.addControl('compensationFund', new FormControl('Colsubsidio'));
     this.formData.addControl('compensationDate', new FormControl(''));
     this.formData.addControl('pensionFund', new FormControl(''));
     this.formData.addControl('pensionDate', new FormControl(''));
@@ -202,8 +202,8 @@ export class UserNewForm implements OnInit, OnDestroy {
     // Mobility Data
     this.formData.addControl('hasVehicle', new FormControl(false));
     this.formData.addControl('driversLicense', new FormControl(false));
-    this.formData.addControl('vehicleType', new FormControl(''));
-    this.formData.addControl('licenseCategory', new FormControl(''));
+    this.formData.addControl('vehicleType', new FormControl('Ninguno'));
+    this.formData.addControl('licenseCategory', new FormControl('N/A'));
     // Emergency Contact
     this.formData.addControl('emergencyContact', new FormControl(''));
     this.formData.addControl('emergencyContactPhone', new FormControl(''));
