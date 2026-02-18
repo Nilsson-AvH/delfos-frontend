@@ -94,7 +94,7 @@ export class HttpUsers {
           console.error('Error fetching user:', error);
           return of(null); // Retornar null para validar en el componente
         })
-      ); 66
+      );
   }
 
   /**

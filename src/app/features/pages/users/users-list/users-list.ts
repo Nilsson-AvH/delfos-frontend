@@ -64,7 +64,7 @@ export class UsersList {
       })
     );
 
-    console.log('users$ initialized with search filter');
+    console.log(this.users$, 'initialized with search filter');
   }
 
   onEdit(userId: string): void {

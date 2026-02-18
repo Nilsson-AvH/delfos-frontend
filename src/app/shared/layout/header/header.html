@@ -14,7 +14,8 @@
 
     <ul class="navbar-menu" [class.is-active]="isMenuOpen">
 
-
+        <!-- Es una forma de visualizar enlaces de cuando se esta autenticado -->
+        @if (httpAuth.currentUser$ | async; as user){
 
         <li class="dropdown-item" [class.active]="activeDropdown === 'users'">
             <a class="menu-trigger" (click)="toggleDropdown('users')">
@@ -30,12 +31,12 @@
                     </a></li>
                 <!-- <li class="divider"></li> -->
                 <!-- <li><a routerLink="/dashboard/administrative-user/new" (click)="closeMenu()">
-                        New Admin User
-                    </a></li>
-                <li><a routerLink="/dashboard/client-manager-user/new" (click)="closeMenu()">
-                        New Client Manager
-                    </a></li>
-                <li class="divider"></li> -->
+                            New Admin User
+                        </a></li>
+                    <li><a routerLink="/dashboard/client-manager-user/new" (click)="closeMenu()">
+                            New Client Manager
+                        </a></li>
+                    <li class="divider"></li> -->
             </ul>
         </li>
 
@@ -66,6 +67,10 @@
                     </a></li>
             </ul>
         </li>
+
+        }
+
+
     </ul>
 
 
