@@ -12,7 +12,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
   styleUrl: './users-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UsersList {
+export default class UsersList {
   // Definir el atriburo que va a recibir la data
   public users$: Observable<any[]> = new Observable<any[]>();
   public searchControl = new FormControl('');
@@ -74,7 +74,7 @@ export class UsersList {
         this.router.navigate(['/dashboard/users/edit/', userId]);
       },
       error: (error) => {
-        console.error('Error getting user data', error);
+        console.error('🔴 Error obteniendo usuario', error);
       }
     });
   }
@@ -82,12 +82,12 @@ export class UsersList {
   onDelete(userId: string): void {
     this.httpUsers.deleteUserById(userId).subscribe({
       next: (data) => {
-        console.log('User deleted', data);
+        console.log('🟢 User deleted', data);
         //Disparamos el trigger para que se actualice la vista
         this.refreshTrigger$.next();
       },
       error: (error) => {
-        console.error('Error deleting user', error);
+        console.error('🔴 Error borrando usuario', error);
       }
     });
   }

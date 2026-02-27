@@ -110,6 +110,20 @@ export class HttpAuth {
     );
   }
 
+  getHeader(): any {
+    // Paso 1 : Obtener el token del local storage si este existe y responder al cliente.
 
+    // Desdestructurar el objeto retornado por el metodo getLocalStorageData()
+    const { token } = this.getLocalStorageData();
+
+    // Si el token no existe, redirigir al login.
+    if (!token) {
+      this.clearLocalStorageData(); // Limpiar el local storage
+      return of(false); // No permitir el acceso a la ruta protegida
+    }
+
+    // Paso 2 : Crear el encabezado con el nombre X-Token y el valor del token que sera enviado al backend.
+    return new HttpHeaders().set('X-Token', token);
+  }
 
 }

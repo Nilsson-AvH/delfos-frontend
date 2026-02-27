@@ -13,7 +13,7 @@ import matchValidator from '../../../../shared/validators/match.validator';
   templateUrl: './user-edit-form.html',
   styleUrls: ['./user-edit-form.css'] // Asegúrate de tener este archivo o borrar la línea
 })
-export class UserEditForm implements OnInit {
+export default class UserEditForm implements OnInit {
 
   public formData!: FormGroup;
   public isEditing: boolean = false; // Bandera para controlar el modo Lectura/Edición

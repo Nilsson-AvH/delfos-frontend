@@ -15,7 +15,7 @@ export const appConfig: ApplicationConfig = {
     // provideHttpClient(); // XMLHttpRequest tecnologia antigua
     provideHttpClient(
       withFetch(), // Usa Fetch API (moderna) en lugar de XMLHttpRequest
-      withInterceptors([devBypassInterceptor]) // Agrega el interceptor
+      // withInterceptors([devBypassInterceptor]) // Agrega el interceptor
     )
   ]
 };

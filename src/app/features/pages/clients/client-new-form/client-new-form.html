@@ -1,4 +1,4 @@
-<form>
+<form [formGroup]="formData" (ngSubmit)="onSubmit()">
     <div class="header-formData">
         <h1>
             ✏️ Create New Client
@@ -35,9 +35,20 @@
 
         <div class="field">
             <label for="clientManager">Client Manager:</label>
+            <!-- TODO: Implementar select con los usuarios -->
             <input type="text" id="clientManager" formControlName="clientManager">
+            <!-- <select formControlName="clientManager" id="clientManager">
+                <option value="">Select Client Manager</option>
+                @for (user of users | async; track user.id) {
+                <option [value]="user.id">{{ user.fullName }}</option>
+                }
+            </select> -->
         </div>
-
     </fieldset>
+
+    <div class="field buttons">
+        <button class="register" type="submit" [disabled]="formData.invalid">Create Client</button>
+        <button class="reset" type="button" (click)="onReset()">Reset</button>
+    </div>
 
 </form>

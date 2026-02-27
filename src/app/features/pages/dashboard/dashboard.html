@@ -1,1 +1,12 @@
-<p>dashboard works!, Pagina donde se gestiona la informacion del usuario logueado</p>
+<div class="dashboard dashboard-component">
+    <aside class="aside">
+        <app-dashboard-menu />
+    </aside>
+
+    <main class="main">
+        <h1>Dashboard</h1>
+        <p>Aqui uds diseñan una forma general de ver el contenido para cualquier usuario autenticado</p>
+
+        <router-outlet />
+    </main>
+</div>

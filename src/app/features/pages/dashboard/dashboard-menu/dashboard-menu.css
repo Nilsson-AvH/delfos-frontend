@@ -1,0 +1,43 @@
+/* =========================================
+   DASHBOARD MENU PROFESIONAL
+   ========================================= */
+.aside-navbar {
+    width: 100%;
+    padding: 1.5rem 0;
+}
+
+.menu-main-dashboard {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.menu-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.menu-item:hover .menu-icon {
+    transform: scale(1.1);
+}
+
+.menu-item.active .menu-icon {
+    filter: brightness(0) invert(1);
+}
+
+/* Separadores sutiles */
+.menu-main-dashboard>li:not(:last-child) {
+    margin-bottom: 0.25rem;
+}

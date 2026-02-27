@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { User } from '../interfaces/user';
+import { HttpAuth } from './http-auth';
 
 // El servicio del frontend para hacer peticiones al backend
 
@@ -18,6 +19,8 @@ export class HttpUsers {
   private apiUrl = environment.apiUrl; // ✅ Usar variable de entorno
   // usersSlug : string = '/v1/users';
   private usersSlug = environment.usersSlug;
+  // Inyectar el servicio HttpAuth para obtener el token
+  private httpAuth = inject(HttpAuth);
 
   /**
    * Crea cualquier tipo de usuario.
@@ -26,7 +29,7 @@ export class HttpUsers {
    * basándose en el campo 'role'.
    */
   createUser(userData: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}${this.usersSlug}`, userData)
+    return this.http.post<any>(`${this.apiUrl}${this.usersSlug}`, userData, { headers: this.httpAuth.getHeader() })
       .pipe(
         tap(response => console.log('🟢 User created successfully:', response)),
         catchError(error => {
@@ -44,7 +47,7 @@ export class HttpUsers {
    * Obtener todos los usuarios
    */
   getAllUsers(): Observable<Partial<User>[]> {
-    return this.http.get<Partial<User>[]>(`${this.apiUrl}${this.usersSlug}`)
+    return this.http.get<Partial<User>[]>(`${this.apiUrl}${this.usersSlug}`, { headers: this.httpAuth.getHeader() })
       //Este pipe nos permite manejar la data que llega del backend
       .pipe(
         //tap nos permite ejecutar un efecto secundario, en este caso, imprimir la data en consola
@@ -58,7 +61,7 @@ export class HttpUsers {
    * Eliminar un usuario por ID
    */
   deleteUserById(userId: string): Observable<Partial<User>> {
-    return this.http.delete<Partial<User>>(`${this.apiUrl}${this.usersSlug}/${userId}`);
+    return this.http.delete<Partial<User>>(`${this.apiUrl}${this.usersSlug}/${userId}`, { headers: this.httpAuth.getHeader() });
   }
 
   /**
@@ -67,7 +70,7 @@ export class HttpUsers {
    * Respuesta transformada: { ...user, ...profile }
    */
   getUserById(userId: string): Observable<Partial<User> | null> {
-    return this.http.get<Partial<User> | null>(`${this.apiUrl}${this.usersSlug}/${userId}`)
+    return this.http.get<Partial<User> | null>(`${this.apiUrl}${this.usersSlug}/${userId}`, { headers: this.httpAuth.getHeader() })
       .pipe(
         // ✅ 1. Depuración inicial (opcional)
         tap(response => console.debug('🟢 Respuesta user cruda Backend getUserById() ->(http-users.ts):', response)),
@@ -101,7 +104,7 @@ export class HttpUsers {
    * Actualizar un usuario por ID
    */
   updateUserById(userId: string | null, updatedUserData: any): Observable<Partial<User>> {
-    return this.http.patch<Partial<User>>(`${this.apiUrl}${this.usersSlug}/${userId}`, updatedUserData);
+    return this.http.patch<Partial<User>>(`${this.apiUrl}${this.usersSlug}/${userId}`, updatedUserData, { headers: this.httpAuth.getHeader() });
   }
 
 }

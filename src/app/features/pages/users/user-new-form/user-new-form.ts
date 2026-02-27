@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common'; // Para directivas básicas
   templateUrl: './user-new-form.html',
   styleUrl: './user-new-form.css',
 })
-export class UserNewForm implements OnInit, OnDestroy {
+export default class UserNewForm implements OnInit, OnDestroy {
 
   public formData!: FormGroup;
   private roleSubscription!: Subscription;
@@ -218,7 +218,7 @@ export class UserNewForm implements OnInit, OnDestroy {
     }
 
     const payload = this.preparePayload(this.formData.value);
-    console.log('Enviando Payload:', payload);
+    console.log('🔴 Enviando Payload:', payload);
 
     // IMPORTANTE: Asegúrate de que tu HttpUsers tenga un método 'createUser' genérico
     // que apunte a /v1/users. El backend debe ser capaz de rutear internamente o
@@ -234,10 +234,10 @@ export class UserNewForm implements OnInit, OnDestroy {
 
     this.submitSubscription = request$.subscribe({
       next: (data: any) => {
-        console.log('User created', data);
+        console.log('🔴 User created', data);
         this.router.navigate(['/dashboard/users']);
       },
-      error: (error: any) => console.error('Error creating user', error)
+      error: (error: any) => console.error('🔴 Error creating user', error)
     });
   }
 
