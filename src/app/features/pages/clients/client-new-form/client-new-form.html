@@ -35,14 +35,14 @@
 
         <div class="field">
             <label for="clientManager">Client Manager:</label>
-            <!-- TODO: Implementar select con los usuarios -->
-            <input type="text" id="clientManager" formControlName="clientManager">
-            <!-- <select formControlName="clientManager" id="clientManager">
+            <!-- Implementar select con los usuarios -->
+            <!-- <input type="text" id="clientManager" formControlName="clientManager"> -->
+            <select formControlName="clientManager" id="clientManager">
                 <option value="">Select Client Manager</option>
-                @for (user of users | async; track user.id) {
+                @for (user of clientManager | async; track user.id) {
                 <option [value]="user.id">{{ user.fullName }}</option>
                 }
-            </select> -->
+            </select>
         </div>
     </fieldset>
 

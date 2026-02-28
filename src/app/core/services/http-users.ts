@@ -58,6 +58,20 @@ export class HttpUsers {
   }
 
   /**
+   * Obtener usuarios por rol
+   */
+  getUsersByRole(role: string): Observable<Partial<User>[]> {
+    return this.http.get<Partial<User>[]>(`${this.apiUrl}${this.usersSlug}?role=${role}`, { headers: this.httpAuth.getHeader() })
+      //Este pipe nos permite manejar la data que llega del backend
+      .pipe(
+        //tap nos permite ejecutar un efecto secundario, en este caso, imprimir la data en consola
+        tap(data => console.log('Data de HttpUsers.getUsersByRole() ->(http-users)', data)),
+        //catchError nos permite manejar los errores que puedan ocurrir en la peticion
+        catchError(error => of([]))
+      );
+  }
+
+  /**
    * Eliminar un usuario por ID
    */
   deleteUserById(userId: string): Observable<Partial<User>> {

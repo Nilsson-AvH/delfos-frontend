@@ -1,22 +1,28 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
 import { HttpClients } from '../../../../core/services/http-clients';
-import { Subscription } from 'rxjs';
+import { catchError, map, Observable, of, Subscription } from 'rxjs';
+import { HttpUsers } from '../../../../core/services/http-users';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-client-new-form',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, AsyncPipe],
   templateUrl: './client-new-form.html',
   styleUrl: './client-new-form.css',
 })
 export default class ClientNewForm {
 
+  // Atributo para almacenar los usuarios
+  clientManager!: Observable<any[]>;
+
   public formData!: FormGroup;
-  private submitSubscription!: Subscription;
+  submitSubscription!: Subscription;
 
   constructor(
     private fb: FormBuilder,
-    private httpClients: HttpClients
+    private httpClients: HttpClients,
+    private httpUsers: HttpUsers
   ) {
     this.initForm();
   }
@@ -28,8 +34,23 @@ export default class ClientNewForm {
       address: ['', Validators.required],
       phone: ['', Validators.required],
       companyEmail: ['', Validators.required],
+      // Select con los usuarios
       clientManager: ['', Validators.required],
     });
+  }
+
+  // Life cycle hooks
+  ngOnInit(): void {
+    // Obtenemos los usuarios con rol clientManager
+    this.clientManager = this.httpUsers.getUsersByRole('clientManager')
+      // Filtramos los usuarios con rol clientManager
+      .pipe(
+        // El map nos permite transformar los datos que vienen del backend
+        // Estos datos vienen en un array de objetos
+        map(users => users.filter(user => user.role === 'clientManager')),
+        // El catchError nos permite manejar los errores
+        catchError(error => of([]))
+      );
   }
 
   onSubmit() {
