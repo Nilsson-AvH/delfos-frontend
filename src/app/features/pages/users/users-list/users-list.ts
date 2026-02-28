@@ -4,10 +4,15 @@ import { HttpUsers } from '../../../../core/services/http-users';
 import { AsyncPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+// import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-users-list',
-  imports: [AsyncPipe, ReactiveFormsModule],
+  imports: [
+    AsyncPipe,
+    ReactiveFormsModule,
+    // JsonPipe
+  ],
   templateUrl: './users-list.html',
   styleUrl: './users-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -15,6 +20,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 export default class UsersList {
   // Definir el atriburo que va a recibir la data
   public users$: Observable<any[]> = new Observable<any[]>();
+  // Definir el atriburo que va a recibir la data de búsqueda
   public searchControl = new FormControl('');
 
   //Creamos un trigger para que se actualice la vista

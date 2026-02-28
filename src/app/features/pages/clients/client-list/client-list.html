@@ -1,1 +1,47 @@
-<p>client-list works!</p>
+<!-- <pre>
+    {{ clients$ | async | json }}
+</pre> -->
+
+<form>
+    <div class="header-formData">
+        <h1>
+            📋 Clients List
+        </h1>
+
+        <div class="search-box">
+            <input type="text" [formControl]="searchControl" placeholder="🔍 Buscar..." class="search-input">
+        </div>
+    </div>
+    <div class="container-list">
+        <table>
+            <tr>
+                <th>Company</th>
+                <th>Address</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Client Manager</th>
+                <th>Actions</th>
+            </tr>
+            @for(client of (clients$ | async); track $index) {
+            <tr>
+                <td>{{ client.companyName }}</td>
+                <td>{{ client.address }}</td>
+                <td>{{ client.phone }}</td>
+                <td>{{ client.companyEmail }}</td>
+                <td>{{ client.clientManager }}</td>
+                <td>
+                    <!-- ✅ APLICANDO LAS NUEVAS CLASES -->
+                    <div class="action-buttons">
+                        <button type="button" class="btn-action edit" (click)="onEdit(client.id)">
+                            View
+                        </button>
+                        <button type="button" class="btn-action delete" (click)="onDelete(client.id)">
+                            Delete
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            }
+        </table>
+    </div>
+</form>

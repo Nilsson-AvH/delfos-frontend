@@ -29,11 +29,11 @@ export const dashboardRoutes: Routes = [
     {
         path: 'clients',
         children: [
-            // {
-            //     path: '',
-            //     loadComponent: () => import('../clients/clients-list/clients-list'),
-            //     data: { roles: ['root', 'superadmin', 'admin', 'auditor'] }
-            // },
+            {
+                path: '',
+                loadComponent: () => import('../clients/client-list/client-list'),
+                data: { roles: ['root', 'superadmin', 'admin', 'auditor'] }
+            },
             {
                 path: 'new',
                 loadComponent: () => import('../clients/client-new-form/client-new-form'),
