@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { BehaviorSubject, Observable, switchMap, combineLatest, startWith, map, forkJoin, of, catchError, tap } from 'rxjs';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { BehaviorSubject, Observable, switchMap, combineLatest, startWith, map } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClients } from '../../../../core/services/http-clients';
 import { Router } from '@angular/router';
 import { HttpUsers } from '../../../../core/services/http-users';
@@ -42,48 +41,30 @@ export default class ClientList {
     // 1. Obtener la lista de clientes del backend y enriquecerla con el nombre del manager
     const clientsList$ = this.refreshTrigger$.pipe(
       switchMap(() => this.httpClients.getAllClients()),
-      switchMap((clients: any[]) => {
-        if (!clients || clients.length === 0) return of([]);
+      map((clients: any[]) => {
+        if (!clients || clients.length === 0) return [];
 
-        // Para cada cliente, hacemos una llamada a getUserById para obtener los datos del manager
-        const clientsWithManagers$ = clients.map(client => {
-          // Extraer el ID teniendo en cuenta que el backend ahora anida el ID del usuario real en 'clientManager.user'
-          // Si por alguna razón histórica no viene 'user', intentamos sacar '_id' (aunque arroje 404).
-          const managerId = client.clientManager?.user
-            || client.clientManager?._id
-            || client.clientManager?.id
-            || (typeof client.clientManager === 'string' ? client.clientManager : null);
+        return clients.map(client => {
+          let clientManagerName = 'Sin Asignar';
 
-          // // LOGS PARA DEPURACIÓN (eliminar cuando se verifique que funciona)
-          // console.log('🕵️‍♂️ Client Manager original:', client.clientManager);
-          // console.log('🕵️‍♂️ ID extraído para consultar:', managerId);
+          // El backend ahora devuelve: client.clientManager.user = { names, lastName, ... }
+          const userNode = client.clientManager?.user;
 
-          if (!managerId) {
-            return of({ ...client, clientManagerName: 'Sin Asignar' });
+          if (userNode) {
+            if (userNode.names) {
+              clientManagerName = `${userNode.names} ${userNode.lastName || ''} ${userNode.secondLastName || ''}`.trim();
+            } else if (userNode.fullName) {
+              clientManagerName = userNode.fullName.trim();
+            } else {
+              clientManagerName = 'Desconocido'
+            }
           }
 
-          return this.httpUsers.getUserById(managerId).pipe(
-            tap(user => console.log('User data de onEdit (users-list)', user)),
-            map((user: any) => {
-              // Validar si trae explícitamente el fullName del backend, si no, intentarlo armar de nuevo
-              let fullName = 'Desconocido';
-              if (user) {
-                // Guiados por el componente users-list que si funciona, los datos vienen en 'names' y 'lastName'
-                if (user.fullName) {
-                  fullName = `${user.fullName || ''}`.trim();
-                } else if (user.names) {
-                  fullName = `${user.names} ${user.lastName || ''} ${user.secondLastName || ''}`.trim();
-                }
-              }
-              // Retornar un nuevo objeto cliente que añade la propiedad clientManagerName
-              return { ...client, clientManagerName: fullName };
-            }),
-            catchError(() => of({ ...client, clientManagerName: 'Desconocido' }))
-          );
+          return {
+            ...client,
+            clientManagerName
+          };
         });
-
-        // Esperar a que se completen todas las llamadas a getUserById
-        return forkJoin(clientsWithManagers$);
       })
     );
 
