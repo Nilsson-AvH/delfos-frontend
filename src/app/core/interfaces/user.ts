@@ -45,6 +45,7 @@ export interface UserBase {
     names: string;
     lastName: string;
     secondLastName?: string;
+    fullName?: string; // Dato compuesto que puede enviar el backend
     email: string;
     role: UserRole;
     status: UserStatus;
