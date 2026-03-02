@@ -39,11 +39,11 @@ export const dashboardRoutes: Routes = [
                 loadComponent: () => import('../clients/client-new-form/client-new-form'),
                 data: { roles: ['root', 'superadmin', 'admin'] }
             },
-            // {
-            //     path: 'edit/:id',
-            //     loadComponent: () => import('../clients/client-edit-form/client-edit-form'),
-            //     data: { roles: ['root', 'superadmin', 'admin'] }
-            // }
+            {
+                path: 'edit/:id',
+                loadComponent: () => import('../clients/client-edit-form/client-edit-form'),
+                data: { roles: ['root', 'superadmin', 'admin'] }
+            }
         ],
         canActivate: [roleGuard],
         // data: { roles: ['root', 'superadmin', 'admin'] }

@@ -7,6 +7,9 @@
 
         <div class="controls">
             @if(!isEditing) {
+            <button type="button" class="btn-cancel-edit" (click)="goBack()" style="margin-right: 10px;">
+                ⬅️ Back to List
+            </button>
             <button type="button" class="btn-enable-edit" (click)="toggleEditMode()">
                 Unlock to Edit
             </button>

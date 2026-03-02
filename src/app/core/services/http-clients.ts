@@ -71,14 +71,29 @@ export class HttpClients {
   }
 
   /**
-   * Actualizar un cliente por ID
+   * Actualizar un cliente por ID (Corporativo)
    */
   updateClientById(clientId: string, clientData: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}${this.clientsSlug}/${clientId}`, clientData, { headers: this.httpAuth.getHeader() })
+    return this.http.patch<any>(`${this.apiUrl}${this.clientsSlug}/${clientId}`, clientData, { headers: this.httpAuth.getHeader() })
       .pipe(
         tap(response => console.log('🟢 Client updated successfully:', response)),
         catchError(error => {
           console.error('🔴 Error updating client:', error);
+          return of(null);
+        })
+      );
+  }
+
+  /**
+   * Actualizar el manager asignado a un cliente (Historial)
+   */
+  updateClientManager(clientId: string, newManagerId: string): Observable<any> {
+    const payload = { newManagerId, reason: "Manual assignment from Dashboard" };
+    return this.http.patch<any>(`${this.apiUrl}${this.clientsSlug}/${clientId}/manager`, payload, { headers: this.httpAuth.getHeader() })
+      .pipe(
+        tap(response => console.log('🟢 Client manager updated successfully:', response)),
+        catchError(error => {
+          console.error('🔴 Error updating client manager:', error);
           return of(null);
         })
       );

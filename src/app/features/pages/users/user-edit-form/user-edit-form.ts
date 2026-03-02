@@ -123,6 +123,11 @@ export default class UserEditForm implements OnInit {
     }
   }
 
+  // Redirige a la tabla principal
+  goBack() {
+    this.router.navigate(['/dashboard/users']);
+  }
+
   // Define las banderas booleanas para el HTML
   private setRoleFlags(role: string) {
     this.isOperational = role === 'operational';

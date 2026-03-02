@@ -22,6 +22,7 @@ export default class UsersList {
   public users$: Observable<any[]> = new Observable<any[]>();
   // Definir el atriburo que va a recibir la data de búsqueda
   public searchControl = new FormControl('');
+  public userIdToDelete: string | null = null; // ID del usuario temporalmente seleccionado para borrar
 
   //Creamos un trigger para que se actualice la vista
   private refreshTrigger$ = new BehaviorSubject<void>(undefined);
@@ -86,15 +87,27 @@ export default class UsersList {
   }
 
   onDelete(userId: string): void {
-    this.httpUsers.deleteUserById(userId).subscribe({
-      next: (data) => {
-        console.log('🟢 User deleted', data);
-        //Disparamos el trigger para que se actualice la vista
-        this.refreshTrigger$.next();
-      },
-      error: (error) => {
-        console.error('🔴 Error borrando usuario', error);
-      }
-    });
+    // En lugar de usar window.confirm, activamos el modal
+    this.userIdToDelete = userId;
+  }
+
+  confirmDelete(): void {
+    if (this.userIdToDelete) {
+      this.httpUsers.deleteUserById(this.userIdToDelete).subscribe({
+        next: (data) => {
+          console.log('🟢 User deleted', data);
+          this.refreshTrigger$.next();
+          this.closeDeleteModal();
+        },
+        error: (error) => {
+          console.error('🔴 Error borrando usuario', error);
+          this.closeDeleteModal();
+        }
+      });
+    }
+  }
+
+  closeDeleteModal(): void {
+    this.userIdToDelete = null;
   }
 }

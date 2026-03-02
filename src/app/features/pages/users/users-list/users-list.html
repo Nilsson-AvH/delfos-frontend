@@ -47,3 +47,17 @@
         </table>
     </div>
 </form>
+
+<!-- Modal de Confirmación de Borrado -->
+@if(userIdToDelete) {
+<div class="modal-backdrop fade-in" (click)="closeDeleteModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <h2 style="color: var(--accent-color);">⚠️ Confirm Deletion</h2>
+        <p>Are you sure you want to delete this user? This action cannot be undone.</p>
+        <div class="modal-actions" style="margin-top: 25px; display: flex; justify-content: center; gap: 15px;">
+            <button type="button" class="btn-cancel-edit" (click)="closeDeleteModal()">Cancel</button>
+            <button type="button" class="btn-action delete" (click)="confirmDelete()">Yes, Delete</button>
+        </div>
+    </div>
+</div>
+}

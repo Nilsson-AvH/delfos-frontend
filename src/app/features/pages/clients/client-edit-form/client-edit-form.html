@@ -1,1 +1,80 @@
-<p>client-edit-form works!</p>
+<form [formGroup]="formData" (ngSubmit)="onSubmit()" [class.read-only-mode]="!isEditing">
+
+    <div class="header-formData">
+        <h1>
+            @if(isEditing) { ✏️ Edit Corporate Details } @else { 🏢 Client Details }
+        </h1>
+
+        <div class="controls">
+            @if(!isEditing) {
+            <button type="button" class="btn-cancel-edit" (click)="goBack()" style="margin-right: 10px;">
+                ⬅️ Back to List
+            </button>
+            <button type="button" class="btn-enable-edit" (click)="toggleEditMode()">
+                Unlock to Edit
+            </button>
+            } @else {
+            <button type="button" class="btn-cancel-edit" (click)="toggleEditMode()">
+                Cancel Editing
+            </button>
+            }
+        </div>
+    </div>
+
+    <fieldset>
+        <legend>Company Identification</legend>
+
+        <div class="field">
+            <label>NIT (Immutable)</label>
+            <input type="text" formControlName="nit">
+        </div>
+
+        <div class="field">
+            <label>Company Name</label>
+            <input type="text" formControlName="companyName">
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Contact Information</legend>
+
+        <div class="field">
+            <label>Legal Address</label>
+            <input type="text" formControlName="address">
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label>Company Phone</label>
+                <input type="tel" formControlName="phone">
+            </div>
+
+            <div class="field">
+                <label>Billing / Contact Email</label>
+                <input type="email" formControlName="companyEmail">
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Assignment</legend>
+        <div class="field">
+            <label>Client Manager</label>
+            <select formControlName="clientManager" class="form-control">
+                <option value="" disabled selected>-- Select a Manager --</option>
+                @for(manager of (clientManagers$ | async); track $index) {
+                <option [value]="manager._id">
+                    {{ manager.names }} {{ manager.lastName }} {{ manager.secondLastName }}
+                </option>
+                }
+            </select>
+        </div>
+    </fieldset>
+
+    @if(isEditing) {
+    <div class="field buttons fade-in">
+        <button class="register" type="submit" [disabled]="formData.invalid">Save Changes</button>
+        <button class="reset" type="button" (click)="toggleEditMode()">Cancel</button>
+    </div>
+    }
+</form>

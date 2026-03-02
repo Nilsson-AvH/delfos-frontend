@@ -27,6 +27,7 @@ export default class ClientList {
 
   // Definir el atriburo que va a recibir la data de búsqueda
   public searchControl = new FormControl('');
+  public clientToDeleteId: string | null = null; // ID del cliente temporalmente seleccionado para borrar
 
   //Creamos un trigger para que se actualice la vista
   private refreshTrigger$ = new BehaviorSubject<void>(undefined);
@@ -122,7 +123,7 @@ export default class ClientList {
     this.httpClients.getClientById(clientId).subscribe({
       next: (data) => {
         console.log('User data de onEdit (users-list)', data);
-        this.router.navigate(['/dashboard/users/edit/', clientId]);
+        this.router.navigate(['/dashboard/clients/edit/', clientId]);
       },
       error: (error) => {
         console.error('🔴 Error obteniendo usuario', error);
@@ -131,16 +132,28 @@ export default class ClientList {
   }
 
   onDelete(clientId: string): void {
-    this.httpClients.deleteClientById(clientId).subscribe({
-      next: (data) => {
-        console.log('🟢 User deleted', data);
-        //Disparamos el trigger para que se actualice la vista
-        this.refreshTrigger$.next();
-      },
-      error: (error) => {
-        console.error('🔴 Error borrando usuario', error);
-      }
-    });
+    // En lugar de usar window.confirm, activamos el modal
+    this.clientToDeleteId = clientId;
+  }
+
+  confirmDelete(): void {
+    if (this.clientToDeleteId) {
+      this.httpClients.deleteClientById(this.clientToDeleteId).subscribe({
+        next: (data) => {
+          console.log('🟢 Client deleted', data);
+          this.refreshTrigger$.next();
+          this.closeDeleteModal();
+        },
+        error: (error) => {
+          console.error('🔴 Error borrando cliente', error);
+          this.closeDeleteModal();
+        }
+      });
+    }
+  }
+
+  closeDeleteModal(): void {
+    this.clientToDeleteId = null;
   }
 
 }
