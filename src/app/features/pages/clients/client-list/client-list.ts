@@ -91,7 +91,7 @@ export default class ClientList {
       map(([clients, term]) => {
         // Función para normalizar texto (quitar tildes y pasar a minúsculas)
         const normalize = (str: string | null) =>
-          (str || '').normalize("NFD").replace(/[^\u0300-\u036f]/g, "").toLowerCase();
+          (str || '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
         const searchTerm = normalize(term);
 
