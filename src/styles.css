@@ -307,6 +307,13 @@ body {
     padding-bottom: 1rem;
     margin-bottom: 1.5rem;
     border-bottom: 2px solid var(--border-color);
+
+    max-width: 800px;
+}
+
+.header-formData .controls {
+    display: flex;
+    gap: 0.5rem;
 }
 
 .header-actionsformData h1 {

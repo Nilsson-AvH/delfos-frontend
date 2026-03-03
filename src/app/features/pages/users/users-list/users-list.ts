@@ -74,6 +74,10 @@ export default class UsersList {
     console.log(this.users$, 'initialized with search filter');
   }
 
+  goNewUser() {
+    this.router.navigate(['/dashboard/users/new']);
+  }
+
   onEdit(userId: string): void {
     this.httpUsers.getUserById(userId).subscribe({
       next: (data) => {

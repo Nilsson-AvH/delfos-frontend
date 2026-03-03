@@ -4,6 +4,7 @@ import { HttpClients } from '../../../../core/services/http-clients';
 import { catchError, map, Observable, of, Subscription } from 'rxjs';
 import { HttpUsers } from '../../../../core/services/http-users';
 import { AsyncPipe } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-client-new-form',
@@ -22,7 +23,8 @@ export default class ClientNewForm {
   constructor(
     private fb: FormBuilder,
     private httpClients: HttpClients,
-    private httpUsers: HttpUsers
+    private httpUsers: HttpUsers,
+    private router: Router,
   ) {
     this.initForm();
   }
@@ -51,6 +53,10 @@ export default class ClientNewForm {
         // El catchError nos permite manejar los errores
         catchError(error => of([]))
       );
+  }
+
+  goBack() {
+    this.router.navigate(['/dashboard/clients']);
   }
 
   onSubmit() {

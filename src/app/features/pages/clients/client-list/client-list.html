@@ -11,8 +11,13 @@
             📋 Clients List
         </h1>
 
-        <div class="search-box">
-            <input type="text" [formControl]="searchControl" placeholder="🔍 Buscar..." class="search-input">
+        <div class="controls">
+            <button type="button" class="btn-enable-edit" (click)="goNewClient()">
+                Create Client
+            </button>
+            <div class="search-box">
+                <input type="text" [formControl]="searchControl" placeholder="🔍 Buscar..." class="search-input">
+            </div>
         </div>
     </div>
     <div class="container-list">

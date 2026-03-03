@@ -119,6 +119,10 @@ export default class ClientList {
     // this.httpUsers.getUserById(IdClientManager)
   }
 
+  goNewClient() {
+    this.router.navigate(['/dashboard/clients/new']);
+  }
+
   onEdit(clientId: string): void {
     this.httpClients.getClientById(clientId).subscribe({
       next: (data) => {

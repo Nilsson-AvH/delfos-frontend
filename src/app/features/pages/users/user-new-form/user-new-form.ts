@@ -39,6 +39,10 @@ export default class UserNewForm implements OnInit, OnDestroy {
     });
   }
 
+  goBack() {
+    this.router.navigate(['/dashboard/users']);
+  }
+
   private initForm() {
     // 1. Campos Base (Siempre existen)
     this.formData = this.fb.group({
