@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { catchError, map, Observable, of, tap } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { HttpAuth } from './http-auth';
 import { environment } from '../../../environments/environment';
 
@@ -38,22 +38,24 @@ export class HttpClients {
   }
 
   /**
-   * Obtener todos los clientes
+   * Obtener todos los clientes con paginación
    */
-  getAllClients(): Observable<any[]> {
-    return this.http.get<any>(`${this.apiUrl}${this.clientsSlug}`, { headers: this.httpAuth.getHeader() })
-      .pipe(
-        // map para transformar la data viene en un objeto con una propiedad clients y la
-        // saco para que el componente reciba solo el array de clientes con .clients
-        map(response => response.clients ? response.clients : response),
-        // tap para mostrar la data
-        tap(response => console.log('🟢 Clients fetched successfully:', response)),
-        // catchError para manejar errores
-        catchError(error => {
-          console.error('🔴 Error fetching clients:', error);
-          return of([]);
-        })
-      );
+  getAllClients(page: number = 1, limit: number = 10, search: string = ''): Observable<{ clients: any[], total: number, page: number, totalPages: number }> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('limit', limit.toString())
+      .set('search', search);
+
+    return this.http.get<{ clients: any[], total: number, page: number, totalPages: number }>(`${this.apiUrl}${this.clientsSlug}`, {
+      headers: this.httpAuth.getHeader(),
+      params
+    }).pipe(
+      tap(response => console.log('🟢 Clients fetched successfully:', response)),
+      catchError(error => {
+        console.error('🔴 Error fetching clients:', error);
+        return of({ clients: [], total: 0, page: 1, totalPages: 1 });
+      })
+    );
   }
 
   /**

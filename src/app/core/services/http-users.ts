@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { User } from '../interfaces/user';
@@ -44,26 +44,34 @@ export class HttpUsers {
   // }
 
   /**
-   * Obtener todos los usuarios
+   * Obtener todos los usuarios con paginación
    */
-  getAllUsers(): Observable<Partial<User>[]> {
-    return this.http.get<Partial<User>[]>(`${this.apiUrl}${this.usersSlug}`, { headers: this.httpAuth.getHeader() })
-      //Este pipe nos permite manejar la data que llega del backend
-      .pipe(
-        //tap nos permite ejecutar un efecto secundario, en este caso, imprimir la data en consola
-        tap(data => console.log('Data de HttpUsers.getAllUsers() ->(http-users)', data)),
-        //catchError nos permite manejar los errores que puedan ocurrir en la peticion
-        catchError(error => of([]))
-      );
+  getAllUsers(page: number = 1, limit: number = 10, search: string = ''): Observable<{ users: Partial<User>[], total: number, page: number, totalPages: number }> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('limit', limit.toString())
+      .set('search', search);
+
+    return this.http.get<{ users: Partial<User>[], total: number, page: number, totalPages: number }>(`${this.apiUrl}${this.usersSlug}`, {
+      headers: this.httpAuth.getHeader(),
+      params
+    }).pipe(
+      tap(data => console.log('Data de HttpUsers.getAllUsers() ->(http-users)', data)),
+      catchError(error => {
+        console.error('Error in getAllUsers', error);
+        return of({ users: [], total: 0, page: 1, totalPages: 1 });
+      })
+    );
   }
 
   /**
    * Obtener usuarios por rol
    */
   getUsersByRole(role: string): Observable<Partial<User>[]> {
-    return this.http.get<Partial<User>[]>(`${this.apiUrl}${this.usersSlug}?role=${role}`, { headers: this.httpAuth.getHeader() })
+    return this.http.get<any>(`${this.apiUrl}${this.usersSlug}?role=${role}&limit=1000`, { headers: this.httpAuth.getHeader() })
       //Este pipe nos permite manejar la data que llega del backend
       .pipe(
+        map(response => response.users ? response.users : response),
         //tap nos permite ejecutar un efecto secundario, en este caso, imprimir la data en consola
         tap(data => console.log('Data de HttpUsers.getUsersByRole() ->(http-users)', data)),
         //catchError nos permite manejar los errores que puedan ocurrir en la peticion

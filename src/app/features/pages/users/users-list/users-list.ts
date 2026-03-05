@@ -1,5 +1,5 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { BehaviorSubject, Observable, switchMap, combineLatest, startWith, map } from 'rxjs';
+import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
+import { BehaviorSubject, Observable, switchMap, combineLatest, startWith, map, tap } from 'rxjs';
 import { HttpUsers } from '../../../../core/services/http-users';
 import { AsyncPipe } from '@angular/common';
 import { Router } from '@angular/router';
@@ -24,6 +24,10 @@ export default class UsersList {
   public searchControl = new FormControl('');
   public userIdToDelete: string | null = null; // ID del usuario temporalmente seleccionado para borrar
 
+  public currentPage$ = new BehaviorSubject<number>(1);
+  public pageSize = 10;
+  public totalPages = signal<number>(1);
+
   //Creamos un trigger para que se actualice la vista
   private refreshTrigger$ = new BehaviorSubject<void>(undefined);
 
@@ -34,48 +38,56 @@ export default class UsersList {
 
   // Ciclo de vida de componentes deAngular
   ngOnInit(): void {
-    // 1. Obtener la lista de usuarios del backend
-    const usersList$ = this.refreshTrigger$.pipe(
-      switchMap(() => this.httpUsers.getAllUsers())
-    );
-
-    // 2. Obtener el término de búsqueda (empezando con vacío)
     const searchTerm$ = this.searchControl.valueChanges.pipe(
-      startWith('')
+      startWith(''),
+      tap(() => {
+        if (this.currentPage$.value !== 1) {
+          this.currentPage$.next(1);
+        }
+      })
     );
 
-    // 3. Combinar ambos y filtrar
-    this.users$ = combineLatest([usersList$, searchTerm$]).pipe(
-      map(([users, term]) => {
-        // Función para normalizar texto (quitar tildes y pasar a minúsculas)
+    this.users$ = combineLatest([this.refreshTrigger$.pipe(startWith(undefined)), searchTerm$, this.currentPage$]).pipe(
+      switchMap(([_, term, page]) => {
         const normalize = (str: string | null) =>
           (str || '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
         const searchTerm = normalize(term);
 
-        if (!searchTerm) return users; // Si no hay búsqueda, retorna todo
-
-        return users.filter(user => {
-          // Concatenar todos los campos relevantes en una sola cadena para buscar
-          const searchableText = normalize(`
-            ${user.nuip} 
-            ${user.names} 
-            ${user.lastName} 
-            ${user.secondLastName} 
-            ${user.jobTitle} 
-            ${user.role}
-          `);
-
-          return searchableText.includes(searchTerm);
-        });
+        return this.httpUsers.getAllUsers(page, this.pageSize, searchTerm).pipe(
+          tap(res => {
+            this.totalPages.set(res.totalPages);
+          }),
+          map(res => res.users)
+        );
       })
     );
 
-    console.log(this.users$, 'initialized with search filter');
+    console.log('Users initialized with server-side pagination');
   }
 
   goNewUser() {
     this.router.navigate(['/dashboard/users/new']);
+  }
+
+  firstPage() {
+    this.currentPage$.next(1);
+  }
+
+  nextPage() {
+    if (this.currentPage$.value < this.totalPages()) {
+      this.currentPage$.next(this.currentPage$.value + 1);
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage$.value > 1) {
+      this.currentPage$.next(this.currentPage$.value - 1);
+    }
+  }
+
+  lastPage() {
+    this.currentPage$.next(this.totalPages());
   }
 
   onEdit(userId: string): void {

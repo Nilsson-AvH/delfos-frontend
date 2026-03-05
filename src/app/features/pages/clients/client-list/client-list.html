@@ -23,20 +23,27 @@
     <div class="container-list">
         <table>
             <tr>
-                <th>Company</th>
+                <th>#</th>
+                <th>Company Name</th>
                 <th>Address</th>
                 <th>Phone</th>
-                <th>Email</th>
-                <th>Client Manager</th>
+                <th>Nit</th>
+                <th>Manager</th>
                 <th>Actions</th>
             </tr>
-            @for(client of (clients$ | async); track $index) {
+            @for(client of clients$ | async; track client._id) {
             <tr>
+                <td style="font-weight: 600; color: var(--text-color, #333);">
+                    {{ (((currentPage$ | async) || 1) - 1) * pageSize + $index + 1 }}
+                </td>
                 <td>{{ client.companyName }}</td>
                 <td>{{ client.address }}</td>
                 <td>{{ client.phone }}</td>
-                <td>{{ client.companyEmail }}</td>
-                <td>{{ client.clientManagerName }}</td>
+                <td>{{ client.nit }}</td>
+                <td>
+                    {{ client.clientManager?.user?.names || 'Sin Asignar' }}
+                    {{ client.clientManager?.user?.lastName || '' }}
+                </td>
                 <td>
                     <!-- ✅ APLICANDO LAS NUEVAS CLASES -->
                     <div class="action-buttons">
@@ -51,11 +58,47 @@
             </tr>
             }
         </table>
+
+        <!-- PAGINATION CONTROLS -->
+        <div class="pagination-controls fade-in"
+            style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; padding: 10px 15px; background: var(--card-bg, #f8f9fa); border-radius: 8px; border: 1px solid var(--border-color, #eaeaea);">
+            <div class="left-controls" style="display: flex; gap: 10px;">
+                <button type="button" class="btn-enable-edit" [disabled]="(currentPage$ | async) === 1"
+                    (click)="firstPage()" [style.opacity]="(currentPage$ | async) === 1 ? '0.5' : '1'"
+                    [style.cursor]="(currentPage$ | async) === 1 ? 'not-allowed' : 'pointer'" style="margin: 0;"
+                    title="First Page">
+                    << First </button>
+                        <button type="button" class="btn-enable-edit" [disabled]="(currentPage$ | async) === 1"
+                            (click)="prevPage()" [style.opacity]="(currentPage$ | async) === 1 ? '0.5' : '1'"
+                            [style.cursor]="(currentPage$ | async) === 1 ? 'not-allowed' : 'pointer'" style="margin: 0;"
+                            title="Previous Page">
+                            < Prev </button>
+            </div>
+
+            <span class="page-info" style="font-weight: 600; color: var(--text-color, #333);">
+                Page {{ currentPage$ | async }} of {{ totalPages() }}
+            </span>
+
+            <div class="right-controls" style="display: flex; gap: 10px;">
+                <button type="button" class="btn-enable-edit" [disabled]="(currentPage$ | async) === totalPages()"
+                    (click)="nextPage()" [style.opacity]="(currentPage$ | async) === totalPages() ? '0.5' : '1'"
+                    [style.cursor]="(currentPage$ | async) === totalPages() ? 'not-allowed' : 'pointer'"
+                    style="margin: 0;" title="Next Page">
+                    Next >
+                </button>
+                <button type="button" class="btn-enable-edit" [disabled]="(currentPage$ | async) === totalPages()"
+                    (click)="lastPage()" [style.opacity]="(currentPage$ | async) === totalPages() ? '0.5' : '1'"
+                    [style.cursor]="(currentPage$ | async) === totalPages() ? 'not-allowed' : 'pointer'"
+                    style="margin: 0;" title="Last Page">
+                    Last >>
+                </button>
+            </div>
+        </div>
     </div>
 </form>
 
 <!-- Modal de Confirmación de Borrado -->
-@if(clientToDeleteId) {
+@if(clientIdToDelete) {
 <div class="modal-backdrop fade-in" (click)="closeDeleteModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
         <h2 style="color: var(--accent-color);">⚠️ Confirm Deletion</h2>

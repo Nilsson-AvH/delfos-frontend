@@ -1,0 +1,72 @@
+<form [formGroup]="formData" (ngSubmit)="onSubmit()">
+    <div class="header-formData">
+        <h1>
+            📄 Generate Document
+        </h1>
+        <div class="controls">
+            <button type="button" class="btn-enable-edit" (click)="goBack()">
+                Back to List
+            </button>
+        </div>
+    </div>
+
+    @if (successResult()) {
+    <div class="success-banner"
+        style="background-color: var(--card-bg, #f8f9fa); border-left: 4px solid var(--accent-color); padding: 15px; margin-bottom: 20px;">
+        <strong style="color: var(--accent-color);">Success!</strong> {{ successResult()?.msg }}
+        <a [href]="successResult()?.url" target="_blank"
+            style="margin-left: 15px; font-weight: bold; color: var(--accent-color);">View PDF</a>
+    </div>
+    }
+
+    <fieldset>
+        <legend>Document Parameters</legend>
+
+        <div class="field" style="position: relative;">
+            <label for="searchControl">Employee (Operational)</label>
+            <input type="text" id="searchControl" [formControl]="searchControl" placeholder="Search by NUIP or Name..."
+                (focus)="showDropdown.set(true)" (blur)="onBlur()" autocomplete="off">
+            @if(showDropdown() && filteredUsers().length > 0) {
+            <ul class="autocomplete-dropdown fade-in">
+                @for(user of filteredUsers(); track $index) {
+                <li (mousedown)="selectUser(user)">
+                    {{ user.nuip }} - {{ user.names }} {{ user.lastName }}
+                </li>
+                }
+            </ul>
+            }
+            @if(showDropdown() && filteredUsers().length === 0 && searchTerm()) {
+            <ul class="autocomplete-dropdown fade-in">
+                <li class="no-results" style="padding: 10px; color: gray;">No employees found.</li>
+            </ul>
+            }
+            <input type="hidden" formControlName="userId">
+        </div>
+
+        <div class="field">
+            <label for="docType">Document Type</label>
+            <select formControlName="docType" id="docType">
+                <option value="">-- Select Type --</option>
+                <option value="contract">Labor Contract</option>
+                <option value="certificate">Labor Certificate</option>
+                <option value="carnet">Operational Carnet</option>
+                <option value="presentation-letter">Presentation Letter</option>
+            </select>
+        </div>
+
+        @if (isPresentationLetter) {
+        <div class="field fade-in">
+            <label for="startDate">Start Date</label>
+            <input type="date" id="startDate" formControlName="startDate">
+            <small style="color: var(--secondary-color, gray);">Required for Presentation Letter</small>
+        </div>
+        }
+
+    </fieldset>
+
+    <div class="field buttons">
+        <button class="register" type="submit" [disabled]="formData.invalid || isSubmitting()">
+            @if(isSubmitting()) { Generating... } @else { Generate Document }
+        </button>
+    </div>
+</form>

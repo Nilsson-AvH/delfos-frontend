@@ -47,6 +47,24 @@ export const dashboardRoutes: Routes = [
         ],
         canActivate: [roleGuard],
         // data: { roles: ['root', 'superadmin', 'admin'] }
+    },
+
+    {
+        path: 'documents',
+        children: [
+            {
+                path: '',
+                loadComponent: () => import('../documentEngine/document-list/document-list'),
+                data: { roles: ['root', 'superadmin', 'admin', 'auditor'] }
+            },
+            {
+                path: 'generate',
+                loadComponent: () => import('../documentEngine/document-generator/document-generator'),
+                data: { roles: ['root', 'superadmin', 'admin'] }
+            }
+        ],
+        canActivate: [roleGuard],
+        // data: { roles: ['root', 'superadmin', 'admin'] }
     }
 ];
 

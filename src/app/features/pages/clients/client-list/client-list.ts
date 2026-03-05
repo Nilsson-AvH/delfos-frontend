@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ViewChild, ElementRef, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { BehaviorSubject, Observable, switchMap, combineLatest, startWith, map } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, startWith, switchMap, tap } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { HttpClients } from '../../../../core/services/http-clients';
 import { Router } from '@angular/router';
@@ -12,11 +12,12 @@ import { HttpUsers } from '../../../../core/services/http-users';
   selector: 'app-client-list',
   imports: [
     AsyncPipe,
-    ReactiveFormsModule,
+    ReactiveFormsModule
     // JsonPipe
   ],
   templateUrl: './client-list.html',
   styleUrl: './client-list.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ClientList {
   // Definir el atriburo que va a recibir la data
@@ -27,10 +28,17 @@ export default class ClientList {
 
   // Definir el atriburo que va a recibir la data de búsqueda
   public searchControl = new FormControl('');
-  public clientToDeleteId: string | null = null; // ID del cliente temporalmente seleccionado para borrar
+  @ViewChild('deleteConfirmDialog') deleteConfirmDialog!: ElementRef<HTMLDialogElement>;
+  public clientIdToDelete: string | null = null;
+  public selectedClientName: string = '';
 
-  //Creamos un trigger para que se actualice la vista
-  private refreshTrigger$ = new BehaviorSubject<void>(undefined);
+  public currentPage$ = new BehaviorSubject<number>(1);
+  public pageSize = 10;
+  public totalPages = signal<number>(1);
+
+  // Observable que emitirá cada vez que necesitemos recargar la lista
+  // Empezamos con un valor indefinido para disparar la primera carga
+  public refreshTrigger$ = new BehaviorSubject<void>(undefined);
 
   constructor(
     private httpClients: HttpClients,
@@ -39,88 +47,56 @@ export default class ClientList {
   ) { }
 
   ngOnInit(): void {
-    // 1. Obtener la lista de clientes del backend y enriquecerla con el nombre del manager
-    const clientsList$ = this.refreshTrigger$.pipe(
-      switchMap(() => this.httpClients.getAllClients()),
-      map((clients: any[]) => {
-        if (!clients || clients.length === 0) return [];
-
-        return clients.map(client => {
-          let clientManagerName = 'Sin Asignar';
-
-          // El backend ahora devuelve: client.clientManager.user = { names, lastName, ... }
-          const userNode = client.clientManager?.user;
-
-          if (userNode) {
-            if (userNode.names) {
-              clientManagerName = `${userNode.names} ${userNode.lastName || ''} ${userNode.secondLastName || ''}`.trim();
-            } else if (userNode.fullName) {
-              clientManagerName = userNode.fullName.trim();
-            } else {
-              clientManagerName = 'Desconocido'
-            }
-          }
-
-          return {
-            ...client,
-            clientManagerName
-          };
-        });
+    const searchTerm$ = this.searchControl.valueChanges.pipe(
+      startWith(''),
+      tap(() => {
+        if (this.currentPage$.value !== 1) {
+          this.currentPage$.next(1);
+        }
       })
     );
 
-    // 2. Obtener el término de búsqueda (empezando con vacío)
-    const searchTerm$ = this.searchControl.valueChanges.pipe(
-      startWith('')
-    );
-
-    // 2.5 Obtener el nombre del cliente manager
-    // this.clientManagerName$ = this.clients$.pipe(
-    //   switchMap((clients) => {
-    //     if (!clients || clients.length === 0) return of([]);
-    //     return forkJoin(
-    //       clients.map(client => this.httpUsers.getUserById(client.clientManager))
-    //     );
-    //   }),
-    //   map((managers) => managers.filter((m): m is Partial<User> => m !== null))
-    // );
-
-    // console.log('clientManagerName$', this.clients$.pipe(map(client => client.clientManager._id)));
-
-    // 3. Combinar ambos y filtrar
-    this.clients$ = combineLatest([clientsList$, searchTerm$]).pipe(
-      map(([clients, term]) => {
-        // Función para normalizar texto (quitar tildes y pasar a minúsculas)
+    this.clients$ = combineLatest([this.refreshTrigger$.pipe(startWith(undefined)), searchTerm$, this.currentPage$]).pipe(
+      switchMap(([_, term, page]) => {
         const normalize = (str: string | null) =>
           (str || '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
         const searchTerm = normalize(term);
 
-        if (!searchTerm) return clients; // Si no hay búsqueda, retorna todo
-
-        return clients.filter(client => {
-          // Concatenar todos los campos relevantes en una sola cadena para buscar
-          const searchableText = normalize(`
-            ${client.companyName}
-            ${client.address}
-            ${client.phone}
-            ${client.companyEmail}
-            ${client.clientManagerName || ''}
-            `);
-          return searchableText.includes(searchTerm);
-        });
+        return this.httpClients.getAllClients(page, this.pageSize, searchTerm).pipe(
+          tap(res => {
+            this.totalPages.set(res.totalPages);
+          }),
+          map(res => res.clients)
+        );
       })
-    )
-    console.log('clients$', this.clients$);
+    );
 
-    // const IdClientManager: any = this.clients$.pipe(
-    //   switchMap((clients) => clients.map(client => client.clientManager))
-    // );
-    // this.httpUsers.getUserById(IdClientManager)
+    console.log('Clients initialized with server-side pagination');
   }
 
   goNewClient() {
     this.router.navigate(['/dashboard/clients/new']);
+  }
+
+  firstPage() {
+    this.currentPage$.next(1);
+  }
+
+  nextPage() {
+    if (this.currentPage$.value < this.totalPages()) {
+      this.currentPage$.next(this.currentPage$.value + 1);
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage$.value > 1) {
+      this.currentPage$.next(this.currentPage$.value - 1);
+    }
+  }
+
+  lastPage() {
+    this.currentPage$.next(this.totalPages());
   }
 
   onEdit(clientId: string): void {
@@ -137,12 +113,12 @@ export default class ClientList {
 
   onDelete(clientId: string): void {
     // En lugar de usar window.confirm, activamos el modal
-    this.clientToDeleteId = clientId;
+    this.clientIdToDelete = clientId;
   }
 
   confirmDelete(): void {
-    if (this.clientToDeleteId) {
-      this.httpClients.deleteClientById(this.clientToDeleteId).subscribe({
+    if (this.clientIdToDelete) {
+      this.httpClients.deleteClientById(this.clientIdToDelete).subscribe({
         next: (data) => {
           console.log('🟢 Client deleted', data);
           this.refreshTrigger$.next();
@@ -157,8 +133,7 @@ export default class ClientList {
   }
 
   closeDeleteModal(): void {
-    this.clientToDeleteId = null;
+    this.clientIdToDelete = null;
   }
 
 }
-
