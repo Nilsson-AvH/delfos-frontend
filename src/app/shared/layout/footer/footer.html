@@ -1,1 +1,13 @@
-<p>footer works!</p>
+<footer class="footer" [ngClass]="{'dashboard-margin': isDashboard}">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <p class="mb-0">© {{ currentYear }} {{ appName }}. Todos los derechos reservados.</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <p class="mb-0">Desarrollado por <a href="https://seguridaddelfos.com"
+                        class="text-decoration-none">Dincor E.U.</a></p>
+            </div>
+        </div>
+    </div>
+</footer>

@@ -3,5 +3,5 @@ export const environment = {
     apiUrl: 'http://localhost:3000/api', // URL de desarrollo de backend
     usersSlug: '/v1/users',
     clientsSlug: '/v1/clients',
-    appName: 'Delfos CRN - Desarrollo'
+    appName: 'Asha CRM - Desarrollo'
 };
