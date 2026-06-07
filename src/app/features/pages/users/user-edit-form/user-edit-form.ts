@@ -28,6 +28,9 @@ export default class UserEditForm implements OnInit {
   public isClientManager = false;
   public isAdministrative = false;
 
+  public photoUrl: string | null = null;
+  public photoFile: File | null = null;
+
   constructor(
     private fb: FormBuilder,
     private httpUsers: HttpUsers,
@@ -77,6 +80,7 @@ export default class UserEditForm implements OnInit {
 
         console.debug('🟢 Usuario cargado:', user);
         this.userLoaded = user; // Guardar backup
+        this.photoUrl = user.photo || 'https://cdn-icons-png.flaticon.com/128/3135/3135715.png';
 
         // 1. Configurar Flags según el rol que viene de la BD
         this.setRoleFlags(user.role);
@@ -112,11 +116,13 @@ export default class UserEditForm implements OnInit {
     } else {
       // Cancelar edición: Revertir cambios y bloquear
       this.formData.reset(); // Limpia
+      this.photoFile = null;
 
       // Volver a preparar la data plana desde el backup
       if (this.userLoaded) {
         const flatBackup = this.prepareUserData(this.userLoaded);
         this.formData.patchValue(flatBackup);
+        this.photoUrl = this.userLoaded.photo || 'https://cdn-icons-png.flaticon.com/128/3135/3135715.png';
       }
 
       this.formData.disable(); // Bloquea
@@ -224,6 +230,25 @@ export default class UserEditForm implements OnInit {
     // });
   }
 
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+      if (validTypes.includes(file.type)) {
+        this.photoFile = file;
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.photoUrl = reader.result as string;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        alert('Por favor selecciona un archivo de imagen válido.');
+        this.photoFile = null;
+        event.target.value = '';
+      }
+    }
+  }
+
   onSubmit() {
     if (this.formData.invalid) {
       this.formData.markAllAsTouched();
@@ -239,13 +264,26 @@ export default class UserEditForm implements OnInit {
       next: (updatedUser) => {
         console.log('Usuario actualizado', updatedUser);
 
-        // Finalizar modo edición
-        this.isEditing = false;
-
-        // Recargar el usuario completo desde el backend para asegurar que 
-        // la estructura anidada (nested objects) esté actualizada y sincronizada
-        if (this.userId) {
-          this.loadUserData(this.userId);
+        if (this.userId && this.photoFile) {
+          this.httpUsers.uploadUserPhoto(this.userId, this.photoFile).subscribe({
+            next: (photoRes) => {
+              console.log('🟢 Foto actualizada exitosamente:', photoRes);
+              this.photoFile = null;
+              this.isEditing = false;
+              this.loadUserData(this.userId!);
+            },
+            error: (photoErr) => {
+              console.error('🔴 Error subiendo la foto:', photoErr);
+              this.isEditing = false;
+              this.loadUserData(this.userId!);
+            }
+          });
+        } else {
+          // Finalizar modo edición
+          this.isEditing = false;
+          if (this.userId) {
+            this.loadUserData(this.userId);
+          }
         }
       },
       error: (err) => console.error('Error actualizando', err)

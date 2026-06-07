@@ -22,6 +22,25 @@
     </div>
 
     <fieldset>
+        <legend>Worker Photo</legend>
+        <div class="photo-section">
+            <div class="photo-preview">
+                @if(photoUrl) {
+                <img [src]="photoUrl" alt="Worker Photo" class="worker-avatar">
+                } @else {
+                <div class="avatar-placeholder">No Photo Available</div>
+                }
+            </div>
+            @if(isEditing) {
+            <div class="photo-upload">
+                <label for="photo">Update Photo</label>
+                <input type="file" id="photo" (change)="onFileSelected($event)" accept="image/*">
+            </div>
+            }
+        </div>
+    </fieldset>
+
+    <fieldset>
         <legend>System Access</legend>
 
         <div class="field">
