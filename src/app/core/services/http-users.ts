@@ -129,4 +129,23 @@ export class HttpUsers {
     return this.http.patch<Partial<User>>(`${this.apiUrl}${this.usersSlug}/${userId}`, updatedUserData, { headers: this.httpAuth.getHeader() });
   }
 
+  /**
+   * Subir foto de perfil de un usuario
+   */
+  uploadUserPhoto(userId: string, photo: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('userId', userId);
+    formData.append('photo', photo);
+
+    return this.http.put<any>(`${this.apiUrl}${this.usersSlug}/photo`, formData, {
+      headers: this.httpAuth.getHeader()
+    }).pipe(
+      tap(response => console.log('🟢 Photo uploaded successfully:', response)),
+      catchError(error => {
+        console.error('Error uploading photo:', error);
+        return of(null);
+      })
+    );
+  }
+
 }

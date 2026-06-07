@@ -2,14 +2,15 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
 import { HttpUsers } from '../../../../core/services/http-users'; // Usaremos HttpUsers general
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { map, Observable, Subscription, tap } from 'rxjs';
 import matchValidator from '../../../../shared/validators/match.validator';
-import { CommonModule } from '@angular/common'; // Para directivas básicas
+import { CommonModule, AsyncPipe } from '@angular/common'; // Para directivas básicas
+import { HttpClients } from '../../../../core/services/http-clients';
 
 @Component({
   selector: 'app-user-new-form',
   standalone: true, // Asumo que usas standalone components por los imports anteriores
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, AsyncPipe],
   templateUrl: './user-new-form.html',
   styleUrl: './user-new-form.css',
 })
@@ -24,10 +25,16 @@ export default class UserNewForm implements OnInit, OnDestroy {
   public isClientManager = false;
   public isAdministrative = false;
 
+  public clients$: Observable<any[]> = new Observable<any[]>;
+
   constructor(
     private fb: FormBuilder,
     private httpUsers: HttpUsers, // Usar el servicio genérico
-    private router: Router
+    private router: Router,
+
+    // ✅ Injectar el nuevo servicio de Clientes
+    private httpClients: HttpClients
+
   ) {
     this.initForm();
   }
@@ -54,10 +61,27 @@ export default class UserNewForm implements OnInit, OnDestroy {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(16)]],
       confirmPassword: ['', [Validators.required]],
-      status: ['inactive', [Validators.required]]
+      status: ['inactive', [Validators.required]],
+      photo: [null]
     }, {
       validators: matchValidator('password', 'confirmPassword')
     });
+  }
+
+  // ✅ Método para manejar la selección del archivo
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      // Opcional: Validar que sea una imagen
+      const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+      if (validTypes.includes(file.type)) {
+        this.formData.patchValue({ photo: file });
+      } else {
+        alert('Por favor selecciona un archivo de imagen válido.');
+        this.formData.patchValue({ photo: null });
+        event.target.value = '';
+      }
+    }
   }
 
   /**
@@ -213,6 +237,13 @@ export default class UserNewForm implements OnInit, OnDestroy {
     this.formData.addControl('emergencyContactPhone', new FormControl(''));
     this.formData.addControl('emergencyContactRelationship', new FormControl(''));
 
+    // Acá la idea es traer todos los clientes para el select, 
+    // pero por ahora solo hay uno de pruebas
+    this.clients$ = this.httpClients.getAllClients(1, 1000, '').pipe(
+      map((response: any) => response.clients)
+      // tap(res => console.log('🔴 Clients data', res))
+    );
+
   }
 
   onSubmit() {
@@ -239,7 +270,27 @@ export default class UserNewForm implements OnInit, OnDestroy {
     this.submitSubscription = request$.subscribe({
       next: (data: any) => {
         console.log('🔴 User created', data);
-        this.router.navigate(['/dashboard/users']);
+        
+        // Extraemos de forma segura el userId del backend
+        const userId = data?.data?.userId || data?.data?.user?._id || data?.data?._id;
+        const photoFile = this.formData.get('photo')?.value;
+
+        if (userId && photoFile) {
+          console.log('🔴 Subiendo foto para el usuario:', userId);
+          this.httpUsers.uploadUserPhoto(userId, photoFile).subscribe({
+            next: (photoRes) => {
+              console.log('🔴 Foto subida exitosamente:', photoRes);
+              this.router.navigate(['/dashboard/users']);
+            },
+            error: (photoErr) => {
+              console.error('🔴 Error subiendo la foto:', photoErr);
+              // Redirigir de todos modos ya que el usuario se creó correctamente
+              this.router.navigate(['/dashboard/users']);
+            }
+          });
+        } else {
+          this.router.navigate(['/dashboard/users']);
+        }
       },
       error: (error: any) => console.error('🔴 Error creating user', error)
     });
@@ -251,11 +302,18 @@ export default class UserNewForm implements OnInit, OnDestroy {
    * Si tu backend maneja todo plano en el body, esto no es necesario.
    */
   private preparePayload(formValue: any): any {
+    // Clonamos para no mutar el valor del formulario directamente
+    const payload = { ...formValue };
+
     // Si tu backend espera, por ejemplo, los teléfonos como array:
-    if (formValue.phones && typeof formValue.phones === 'string') {
-      formValue.phones = [formValue.phones];
+    if (payload.phones && typeof payload.phones === 'string') {
+      payload.phones = [payload.phones];
     }
-    return formValue;
+
+    // Eliminamos la foto del payload JSON ya que se subirá vía FormData
+    delete payload.photo;
+
+    return payload;
   }
 
   onReset() {

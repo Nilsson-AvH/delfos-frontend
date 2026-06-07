@@ -1,3 +1,7 @@
+<!-- <pre>
+    {{ clients$ | async | json }}
+</pre> -->
+
 <form [formGroup]="formData" (ngSubmit)="onSubmit()">
     <div class="header-formData">
         <h1>
@@ -78,7 +82,7 @@
 
         <div class="field">
             <label for="photo">Photo</label>
-            <input type="file" id="photo" formControlName="photo">
+            <input type="file" id="photo" (change)="onFileSelected($event)" accept="image/*">
         </div>
 
     </fieldset>
@@ -259,7 +263,13 @@
             <legend>Job Assignment</legend>
             <div class="field">
                 <label for="clientId">Client</label>
-                <input type="text" id="clientId" formControlName="clientId">
+                <!-- <input type="text" id="clientId" formControlName="clientId"> -->
+                <select id="clientId" formControlName="clientId">
+                    <option value="">Select Client</option>
+                    @for (client of clients$ | async; track client._id) {
+                    <option [value]="client._id">{{ client.companyName }}</option>
+                    }
+                </select>
             </div>
         </fieldset>
 
